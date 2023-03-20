@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+{% block main %}
+
+<div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Usuários Cadastrados</h4>
+                                <span class="btn btn-primary"><a type="button" href="{% url 'register' %}">Cadastrar Usuário</a></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+                                                <th scope="col">Nome</th>
+                                                <th scope="col">email</th>
+                                                <th scope="col">Perfil</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for usuario in usuarios %}
+                                            <tr>
+                                                <th>{{usuario.nome}}</th>
+                                                <td>{{usuario.user.email}}</td>
+                                                <td>{{usuario.role| tipo_registro}}</td>
+                                                <td>{{usuario.user.id| status_usuario}}</td>
+                                                <td>
+
+                                                     <button type="button" class="btn btn-primary" onclick="atividade({{usuario.user.id}})" > <span class="fa fa-edit"></span></button>
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDeletCargo" onclick="atividadedelet({{usuario.user.id}})" > <span class="fa fa-trash"></span></button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="form" class="form-horizontal" method="post" action="{% url 'usuario_edit_admin' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Editar Usuário </h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id_edit"  id="id_edit" value="">
+              {{user_profile_edit.as_p}}
+              {{form_edit_user_admin.as_p}}
+
+
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Editar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+<div id="myModalConfirmDeletCargo" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="formdelettask" class="form-horizontal" method="post" action="{% url 'usuario_deletar' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Deletar Usuário </h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id_delet"  id="id_delet" value="">
+                <h3>Você deseja deletar esse Usuário? Essa ação não tem volta!</h3>
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Deletar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block jsadd %}
+
+<script>
+    function atividade(id){
+        console.log(id);
+        $.ajax({
+            url: "/accounts/usuario_edit_admin_ajax/" + id,
+            async: true,
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+
+                $('#form').trigger("reset");
+
+                $('#id_role').val(data.role);
+                $('#id_is_active').prop('checked', data.is_active);
+
+                $('#id_edit').val(id);
+
+                $('#myModalEdit').modal('show');
+
+            }
+        });
+    };
+
+    function atividadedelet(id){
+      document.getElementById("id_delet").value = id;
+      console.log(id)
+    };
+
+</script>
+{% endblock  %}

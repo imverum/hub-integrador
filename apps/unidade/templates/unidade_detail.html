@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+{% block main %}
+
+<div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Projetos Cadastrados</h4>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" >Cadastrar Projeto</button>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+                                                <th scope="col">Projeto</th>
+                                                <th scope="col">Cod Projeto</th>
+                                                <th scope="col">Descrição</th>
+                                                <th scope="col">Início</th>
+                                                <th scope="col">Fim</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for projeto in projetos %}
+                                            <tr>
+                                                <th><a href="{% url 'projeto_detail' projeto.projeto.id %}">{{projeto.projeto.projeto}}</a></th>
+                                                <td>{{projeto.projeto.codigo_projeto}}</td>
+                                                <td>{{projeto.projeto.descricao}}</td>
+                                                <td>{{projeto.projeto.inicio_projeto| date:"d/m/Y"}}</td>
+                                                <td>{{projeto.projeto.termino_projeto| date:"d/m/Y"}}</td>
+                                                <td>{{projeto.projeto.id| status_projeto}}</td>
+                                                <td>
+
+                                                     <button type="button" class="btn btn-primary" onclick="atividade({{projeto.projeto.id}})" > <span class="fa fa-edit"></span></button>
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDeletCargo" onclick="atividadedelet({{projeto.projeto.id}})" > <span class="fa fa-trash"></span></button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+<form name="form" id="form"  method="post" action="{% url 'register_projeto' %}" enctype="multipart/form-data">
+{% csrf_token %}
+    <!-- Modal -->
+<div class="modal fade show" id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Adicionar Projeto</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" >
+          <div class="form-group">
+              <div class="col-sm-12">
+                  <input type="hidden" name="unidade_id"  id="unidade_id" value="{{unidade.id}}">
+
+                {{ form_projeto.as_p }}
+
+              </div>
+          </div>
+
+      </div>
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</form>
+
+
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="formedit" class="form-horizontal" method="post" action="{% url 'projeto_edit' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Editar Projeto </h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id_edit"  id="id_edit" value="">
+                <label for="id_projeto_edit">Projeto:</label>
+                <input type="text" name="projeto" class="form-control" required="" id="id_projeto_edit">
+                <label for="id_codigo_projeto_edit">Codigo projeto:</label>
+                <input type="text" name="codigo_projeto" class="form-control" required="" id="id_codigo_projeto_edit">
+                <label for="id_descricao_edit">Descrição:</label>
+                <textarea name="descricao" cols="40" rows="4" class="form-control" required="" id="id_descricao_edit"></textarea>
+                <label for="id_inicio_projeto_edit">Inícion Projeto:</label>
+                <input type="date" name="inicio_projeto" class="form-control" required="" id="id_inicio_projeto_edit">
+                <label for="id_termino_projeto_edit">Termino Projeto:</label>
+                <input type="date" name="termino_projeto" class="form-control" required="" id="id_termino_projeto_edit">
+
+
+
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Editar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+<div id="myModalConfirmDeletCargo" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="formdelettask" class="form-horizontal" method="post" action="{% url 'projeto_deletar' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Deletar Projeto </h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id_delet"  id="id_delet" value="">
+                <h3>Você deseja deletar esse Projeto? Essa ação não tem volta!</h3>
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Deletar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block jsadd %}
+
+<script>
+    function atividade(id){
+        console.log(id);
+        $.ajax({
+            url: "/projetos/projeto_edit_ajax/" + id,
+            async: true,
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+
+                $('#formedit').trigger("reset");
+
+                $('#id_projeto_edit').val(data.projeto);
+                $('#id_codigo_projeto_edit').val(data.codigo_projeto);
+                $('#id_descricao_edit').val(data.descricao);
+                $('#id_inicio_projeto_edit').val(data.inicio_projeto);
+                $('#id_termino_projeto_edit').val(data.termino_projeto);
+
+                $('#id_edit').val(id);
+
+                $('#myModalEdit').modal('show');
+
+            }
+        });
+    };
+
+    function atividadedelet(id){
+      document.getElementById("id_delet").value = id;
+      console.log(id)
+    };
+
+</script>
+{% endblock  %}

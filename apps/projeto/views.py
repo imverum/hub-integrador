@@ -10,10 +10,12 @@ from apps.projeto.models import Projeto, Usuario_Projeto
 from apps.usuario.models import Profile
 from django.contrib import messages
 
+
+@csrf_exempt
 @login_required
 def projeto_detail(request, id):
     pass
-
+@csrf_exempt
 @login_required
 def register_projeto(request):
     unidade_id = request.POST.get("unidade_id")
@@ -55,7 +57,7 @@ def register_projeto(request):
         else:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
+@csrf_exempt
 @login_required
 def projeto_edit_ajax(request, pk):
     projeto = Projeto.objects.get(id=pk)
@@ -69,7 +71,7 @@ def projeto_edit_ajax(request, pk):
     }
 
     return JsonResponse(data)
-
+@csrf_exempt
 @login_required
 def projeto_edit(request):
     id = request.POST.get("id_edit")

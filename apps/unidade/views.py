@@ -1,11 +1,13 @@
 from django.shortcuts import render
-
+from django.views.decorators.csrf import csrf_exempt
 from apps.core.models import Usuario_Unidade, Unidade
 from apps.projeto.forms import ProjetoFormAdd
 from apps.projeto.models import Projeto, Usuario_Projeto
 from apps.usuario.models import Profile
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
+@csrf_exempt
 def list_unidades(request):
     usuario = request.user
     profile = Profile.objects.get(user=usuario)
@@ -14,6 +16,8 @@ def list_unidades(request):
 
     return render(request, 'list_unidades.html', {'unidades':unidades, 'profile':profile})
 
+@login_required
+@csrf_exempt
 def unidade_detail(request, id):
     unidade = Unidade.objects.get(id=id)
     qtd_usuarios = Usuario_Unidade.objects.filter(unidade=unidade).count()

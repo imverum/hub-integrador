@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
@@ -16,7 +17,7 @@ from apps.usuario.models import Profile
 
 
 
-
+@csrf_exempt
 @login_required
 def execucao_ld(request):
     projeto_id = request.POST.get("projeto_id")
@@ -56,7 +57,7 @@ def execucao_ld(request):
         pass
 
 
-
+@csrf_exempt
 @login_required
 def download_arquivo(request, id):
     arquivold = get_object_or_404(ExecucaoLD, id=id)
@@ -68,7 +69,7 @@ def download_arquivo(request, id):
 
     return response
 
-
+@csrf_exempt
 def configura_ld(request):
     projeto_id = request.POST.get("projeto_id")
     projeto = Projeto.objects.get(id=projeto_id)

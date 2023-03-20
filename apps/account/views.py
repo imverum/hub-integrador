@@ -9,8 +9,9 @@ from apps.account.forms import LoginForm, UserRegistrationForm, RegisterFormset,
 from apps.core.models import Owner
 from apps.usuario.models import Profile
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
-
+@csrf_exempt
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -35,7 +36,7 @@ def user_login(request):
 
 
 
-
+@csrf_exempt
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -57,7 +58,7 @@ def user_login(request):
         return render(request, 'account/login.html', {'form':form})
 
 
-
+@csrf_exempt
 @login_required
 def register(request):
     user = request.user
@@ -108,7 +109,7 @@ def register(request):
         return render(request, 'registration/register.html',
                           {'user_form': user_form, 'user_profile_formset': user_profile_formset})
 
-
+@csrf_exempt
 @login_required
 def usuario_deletar(request):
     usuario_id = request.POST.get("id_delet")
@@ -117,7 +118,7 @@ def usuario_deletar(request):
     messages.success(request, "Usuário excluido com sucesso !")
     return redirect('list_user')
 
-
+@csrf_exempt
 @login_required
 def usuario_edit_admin(request):
     usuario_id = request.POST.get("id_edit")
@@ -132,7 +133,7 @@ def usuario_edit_admin(request):
             return redirect('list_user')
         else:
             return redirect('list_user')
-
+@csrf_exempt
 @login_required
 def usuario_edit_admin_ajax(request, pk):
     usuario = User.objects.get(id=pk)

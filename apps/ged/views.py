@@ -68,7 +68,7 @@ def download_arquivo(request, id):
     response['Content-Disposition'] = f'attachment; filename="{arquivold.arquivold}"'
 
     return response
-
+@login_required
 @csrf_exempt
 def configura_ld(request):
     projeto_id = request.POST.get("projeto_id")

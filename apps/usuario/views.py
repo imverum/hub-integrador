@@ -8,10 +8,10 @@ from apps.projeto.models import Usuario_Projeto
 from apps.usuario.forms import UserProfileEditForm, RegisterFormset, UserEditForm, UnidadeAddForm, ProjetoUsuarioAddForm
 from apps.usuario.models import Profile, ROLE_CHOICE
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
-
-
-
+@csrf_exempt
+@login_required
 def list_user(request):
     user = request.user
     profile = Profile.objects.get(user=user)
@@ -26,6 +26,7 @@ def list_user(request):
     return render(request, 'list_user.html',
                   {'usuarios': usuarios, 'user_form': user_form, 'choices': choices, 'profile': profile, 'form_edit_user_admin':form_edit_user_admin, 'user_profile_edit':user_profile_edit})
 
+@csrf_exempt
 @login_required
 def profile_detail(request):
     id = request.user.id
@@ -36,6 +37,7 @@ def profile_detail(request):
     return render(request, 'profile.html', {'usuario':usuario,'profile':profile, 'form':form})
 
 
+@csrf_exempt
 @login_required
 def profile_edit(request, id):
     usuario = User.objects.get(id=id)
@@ -57,7 +59,7 @@ def profile_edit(request, id):
         else:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
+@csrf_exempt
 @login_required
 def profile_detail(request):
     usuario = request.user
@@ -72,7 +74,7 @@ def profile_detail(request):
     return render(request, 'profile.html', {'projetos':projetos, 'usuario':usuario, 'form_profile':form_profile, 'form_unidade':form_unidade,'unidades':unidades, 'profile':profile, 'profile_perfil':profile_perfil, 'form_projeto_usuario':form_projeto_usuario})
 
 
-
+@csrf_exempt
 @login_required
 def profile_detail_visita(request, id):
     usuario = User.objects.get(id=id)
@@ -82,6 +84,7 @@ def profile_detail_visita(request, id):
 
     return render(request, 'profile.html', {'usuario':usuario, 'form':form, 'form_unidade':form_unidade,'unidades':unidades})
 
+@csrf_exempt
 @login_required
 def profile_edit(request, id):
     usuario = User.objects.get(id=id)
@@ -102,7 +105,7 @@ def profile_edit(request, id):
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-
+@csrf_exempt
 @login_required
 def adicionar_unidade(request, id):
     usuario = User.objects.get(id=id)
@@ -124,6 +127,7 @@ def adicionar_unidade(request, id):
     else:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+@csrf_exempt
 @login_required
 def deletar_unidade(request, id):
     unidade = Usuario_Unidade.objects.get(id=id)
@@ -132,6 +136,7 @@ def deletar_unidade(request, id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
+@csrf_exempt
 @login_required
 def adicionar_projeto(request, id):
     usuario = User.objects.get(id=id)
@@ -153,6 +158,7 @@ def adicionar_projeto(request, id):
     else:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+@csrf_exempt
 @login_required
 def deletar_projeto(request, id):
     projeto = Usuario_Projeto.objects.get(id=id)

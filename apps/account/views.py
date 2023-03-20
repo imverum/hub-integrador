@@ -11,6 +11,7 @@ from apps.usuario.models import Profile
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
+
 @csrf_exempt
 def user_login(request):
     if request.method == 'POST':

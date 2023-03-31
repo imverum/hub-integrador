@@ -23,7 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+#DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://hub-integrador-production.up.railway.app/', 'https://*.hub-integrador-production.up.railway.app/', 'http://127.0.0.1:8000/']
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'apps.unidade.apps.UnidadeConfig',
     'apps.projeto.apps.ProjetoConfig',
     'apps.ged.apps.GedConfig',
+    'apps.fornecedores.apps.FornecedoresConfig',
 ]
 
 MIDDLEWARE = [

@@ -11,6 +11,7 @@ urlpatterns = [
     path('unidades/', include('apps.unidade.urls')),
     path('projetos/', include('apps.projeto.urls')),
     path('ged/', include('apps.ged.urls')),
+    path('fornecedores/', include('apps.fornecedores.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) # REVISAR 14

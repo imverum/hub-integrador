@@ -3,18 +3,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from apps.core.models import Unidade
-from apps.ged.forms import LDFormCarga, ConfiguraLdForm
-from apps.ged.models import ExecucaoLD, ConfiguraLd
-from apps.projeto.forms import ProjetoFormAdd, GEDFormCarga
+from apps.fornecedores.models import Fornecedores
+from apps.ged.forms import LDFormCarga, ConfiguraLdForm, ConfiguraGEDForm, GEDFormCarga
+from apps.ged.models import ExecucaoLD, ConfiguraLd, ConfiguraGED
+from apps.projeto.forms import ProjetoFormAdd
 from apps.projeto.models import Projeto, Usuario_Projeto
 from apps.usuario.models import Profile
 from django.contrib import messages
 
 
-@csrf_exempt
-@login_required
-def projeto_detail(request, id):
-    pass
+
 @csrf_exempt
 @login_required
 def register_projeto(request):
@@ -47,10 +45,41 @@ def register_projeto(request):
              titulo='DESCRIÇÃO',
              status_ld='STATUS',
              codigo_atividade='ITEM CR',
-             sk='sk',
              data_emissão_inicial_prevista='TÉRMINO LINHA DE BASE',
              paginas='PÁGINAS',
              a1_equivalente='A1 EQ.',
+             tipo_emissao='TIPO EMISSÃO',
+             planilha='ld',
+             linha='3',
+             coluna='1',
+            )
+
+            projeto_ged = ConfiguraGED.objects.create(
+                owner=profile.owner,
+                unidade=unidade,
+                projeto=projeto,
+                documento='Numero_Documento',
+                revisao='Revisão',
+                tipo_documento='CODIGOS_CLASSE_Descricao',
+                disciplina='NOME_DISCIPLINA',
+                titulo_1='Titulo_1',
+                titulo_2='Titulo_2',
+                empresa='Nome_Fornecedor',
+                numero_contratada='Numero_Fornecedor',
+                status_ged='State',
+                data_atualizacao='Updated',
+                grd_recebimento='Número GRD Entrada',
+                data_grd_recebimento='Data GRD Entrada',
+                data_analise='Data Análise',
+                resultado_analise='Motivo Emissão',
+                formato='Formato_Documento',
+                work_package_area='Codigo CWA',
+                work_package='Codigo Wp',
+                tipo_emissao='Codigo_Tipo_Emissao',
+                atual_responsavel='Atual Responsável',
+                planilha='Relatorio Geral',
+                linha='1',
+                coluna='0',
             )
 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -98,30 +127,54 @@ def projeto_edit(request):
 def projeto_deletar(request):
     projeto_id_delet = request.POST.get('id_delet')
     projeto = Projeto.objects.get(id=projeto_id_delet)
-    projeto.delete()
-    messages.success(request, "Restricion deleted successfully!")
+    try:
+        projeto.delete()
+        messages.success(request, "Projeto deletado com sucesso!")
+    except:
+        messages.success(request, "Esse projeto já tem execuções salvas na base e não pode ser deletado! Para excluir esse projeto entre em contato com o administrador do sistema")
+
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
 
 
 @csrf_exempt
 @login_required
-def projeto_detail(request, id):
+def projeto_ged(request, id):
     projeto = Projeto.objects.get(id=id)
-
-    form_projeto_ged = GEDFormCarga(request.POST or None)
-    form_projeto_ld = LDFormCarga(request.POST or None)
     usuario = request.user
     profile = Profile.objects.get(user=usuario)
-    execucoes = ExecucaoLD.objects.filter(projeto=projeto)
+
+    fornecedores_owner = Fornecedores.objects.filter(owner=profile.owner)
+
+    form_projeto_ged = GEDFormCarga(request.POST or None)
+    form_projeto_ld = LDFormCarga(request.POST or None, fornecedor_queryset=fornecedores_owner)
+
+    execucoes = ExecucaoLD.objects.filter(projeto=projeto).order_by('-data_execucao')
     configura_ld_instance = ConfiguraLd.objects.get(projeto=projeto)
     form_configura = ConfiguraLdForm(request.POST or None, instance=configura_ld_instance)
 
+    configura_ged_instance = ConfiguraGED.objects.get(projeto=projeto)
+    form_configura_ged = ConfiguraGEDForm(request.POST or None, instance=configura_ged_instance)
+
+    contexto = {'form_configura_ged':form_configura_ged, 'projeto':projeto, 'form_configura':form_configura, 'execucoes':execucoes, 'form_projeto_ged':form_projeto_ged,'form_projeto_ld':form_projeto_ld ,'usuario':usuario, 'profile':profile}
 
 
+    return render(request, 'projeto_ged.html', contexto)
 
-    contexto = {'projeto':projeto, 'form_configura':form_configura, 'execucoes':execucoes, 'form_projeto_ged':form_projeto_ged,'form_projeto_ld':form_projeto_ld ,'usuario':usuario, 'profile':profile}
+
+@csrf_exempt
+@login_required
+def projeto_home(request, id):
+    projeto = Projeto.objects.get(id=id)
+    usuario = request.user
+    profile = Profile.objects.get(user=usuario)
 
 
-    return render(request, 'projeto_detail.html', contexto)
+    contexto = {'projeto':projeto, 'usuario':usuario, 'profile':profile}
+
+
+    return render(request, 'projeto_home.html', contexto)
 
 

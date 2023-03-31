@@ -4,7 +4,7 @@
 
 
 {% block main %}
-
+{% include 'message.html' %}
 <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
@@ -29,7 +29,7 @@
                                         <tbody>
                                         {% for projeto in projetos %}
                                             <tr>
-                                                <th><a href="{% url 'projeto_detail' projeto.projeto.id %}">{{projeto.projeto.projeto}}</a></th>
+                                                <th><a href="{% url 'projeto_home' projeto.projeto.id %}">{{projeto.projeto.projeto}}</a></th>
                                                 <td>{{projeto.projeto.codigo_projeto}}</td>
                                                 <td>{{projeto.projeto.descricao}}</td>
                                                 <td>{{projeto.projeto.inicio_projeto| date:"d/m/Y"}}</td>

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+{% block main %}
+
+<div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Fluxos Cadastrados</h4>
+
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" >Cadastrar Etapa</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+                                                <th scope="col">Tipo de Devolução</th>
+                                                <th scope="col">Certifica?</th>
+                                                <th scope="col">Cancelado?</th>
+                                                <th scope="col">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for fluxo in fluxos %}
+                                            <tr>
+                                                <th>{{fluxo.sigla_devolucao}}</th>
+                                                <td>{{fluxo.certificado| render_sim_nao}}</td>
+                                                <td>{{fluxo.cancelado | render_sim_nao}}</td>
+                                                <td>
+
+                                                     <button type="button" class="btn btn-primary" onclick="atividade({{fluxo.id}})" > <span class="fa fa-edit"></span></button>
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDeletCargo" onclick="atividadedelet({{fluxo.id}})" > <span class="fa fa-trash"></span></button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="form" class="form-horizontal" method="post" action="{% url 'adicionar_fluxo_devolucao_ged' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Cadastro Fluxo</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id"  id="id" value="">
+
+                {{ fluxo_devolucao_form.as_p }}
+
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="formedit" class="form-horizontal" method="post" action="{% url 'fluxo_ged_devolucao_edit' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Editar Fluxo</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id_edit"  id="id_edit" value="">
+
+                <label for="id_sigla_devolucao_edit">Sigla:</label>
+                <input type="text" name="sigla_devolucao" class="form-control" required="" id="id_sigla_devolucao_edit">
+
+                <label for="id_certifica_edit">Certifica primeira emissão:</label>
+                <select name="certificado" class="form-control" id="id_certifica_edit">
+                        <option value="1">SIM</option>
+                        <option value="2">NÃO</option>
+                </select>
+                <label for="id_cancelado_edit">Cancelado:</label>
+                <select name="cancelado" class="form-control" id="id_cancelado_edit">
+                        <option value="1">SIM</option>
+                        <option value="2">NÃO</option>
+                </select>
+
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Editar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+<div id="myModalConfirmDeletCargo" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="formdelettask" class="form-horizontal" method="post" action="{% url 'fluxo_ged_devolucao_deletar' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Deletar Fluxo Devolução</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id_delet"  id="id_delet" value="">
+                <h3>Você deseja deletar essa etapa do Fluxo? Essa ação não tem volta!</h3>
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Deletar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block jsadd %}
+
+<script>
+    function atividade(id){
+        console.log(id);
+        $.ajax({
+            url: "/ged/fluxo_ged_devolucao_edit_ajax/" + id,
+            async: true,
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+
+                $('#form').trigger("reset");
+
+                $('#id_sigla_devolucao_edit').val(data.sigla_devolucao);
+                $('#id_certifica_edit').val(data.certificado);
+                $('#id_cancelado_edit').val(data.cancelado);
+
+
+                $('#id_edit').val(id);
+
+                $('#myModalEdit').modal('show');
+
+            }
+        });
+    };
+
+    function atividadedelet(id){
+      document.getElementById("id_delet").value = id;
+      console.log(id)
+    };
+
+</script>
+{% endblock  %}

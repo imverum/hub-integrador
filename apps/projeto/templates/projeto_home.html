@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+
+{% block main %}
+{% include 'message.html' %}
+
+<nav arial-label="breadcrumb">
+        <ol class="breadcrumb">
+            {%if projeto.ged == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'projeto_ged' projeto.id %}">GED</a></li>
+            {% endif %}
+            {%if projeto.awp_master_index == True %}
+            <li class="breadcrumb-item active" selected><a class="btn btn-light" href="">AWP Master Index</a></li>
+            {% endif %}
+            {%if projeto.cronograma_contratadas == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-light" href="">Cronograma Contratadas</a></li>
+            {% endif %}
+            {%if projeto.cronograma_master == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-light" href="">Cronograma Master</a></li>
+            {% endif %}
+            {%if projeto.bim == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-light" href="">BIM</a></li>
+            {% endif %}
+            {%if projeto.suprimentos == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-light" href="">Suprimentos</a></li>
+            {% endif %}
+            {%if projeto.gestao_materiais == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-light" href="">Gestão Materiais</a></li>
+            {% endif %}
+            {%if projeto.comissionamento == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-light" href="">Comissionamento</a></li>
+            {% endif %}
+
+        </ol>
+</nav>
+
+{% endblock  %}

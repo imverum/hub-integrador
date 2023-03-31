@@ -2,8 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import inlineformset_factory
 
-from apps.core.models import Usuario_Unidade
-from apps.projeto.models import Usuario_Projeto
+from apps.core.models import Usuario_Unidade, Unidade
+from apps.projeto.models import Usuario_Projeto, Projeto
 from apps.usuario.models import Profile
 
 
@@ -54,15 +54,29 @@ class UserEditForm(forms.ModelForm):
 
 
 class UnidadeAddForm(forms.ModelForm):
+    unidade = forms.ModelChoiceField(queryset=Unidade.objects.none())
+    unidade.widget.attrs.update({'class': 'form-control'})
     class Meta:
         model = Usuario_Unidade
         fields = ('unidade',)
+
+    def __init__(self, *args, **kwargs):
+        unidades_queryset = kwargs.pop('unidades_queryset', Unidade.objects.all())
+        super().__init__(*args, **kwargs)
+        self.fields['unidade'].queryset = unidades_queryset
 
 
 
 
 
 class ProjetoUsuarioAddForm(forms.ModelForm):
+    projeto = forms.ModelChoiceField(queryset=Projeto.objects.none())
+    projeto.widget.attrs.update({'class': 'form-control'})
     class Meta:
         model = Usuario_Projeto
         fields = ('projeto',)
+
+    def __init__(self, *args, **kwargs):
+        projetos_queryset = kwargs.pop('projetos_queryset', Projeto.objects.all())
+        super().__init__(*args, **kwargs)
+        self.fields['projeto'].queryset = projetos_queryset

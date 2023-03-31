@@ -23,8 +23,3 @@ class ProjetoFormAdd(forms.ModelForm):
         fields = ('projeto', 'codigo_projeto', 'descricao', 'inicio_projeto', 'termino_projeto')
 
 
-class GEDFormCarga(forms.Form):
-    ged = forms.FileField(label='GED')
-    data_corte = forms.DateField(
-        label='Data Corte',
-        widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class':'form-control'}))

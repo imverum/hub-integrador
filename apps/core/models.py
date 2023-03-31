@@ -4,7 +4,7 @@ from django.urls import reverse
 
 
 class Owner(models.Model):
-    owner = models.CharField(max_length=100)
+    owner = models.CharField(max_length=100, unique=True)
     ativo = models.BooleanField(default=True)
 
 

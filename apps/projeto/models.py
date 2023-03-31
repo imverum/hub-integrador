@@ -3,6 +3,12 @@ from django.db import models
 
 from apps.core.models import Owner, Unidade
 
+ROLE_CHOICE_EXECUCAO=(
+    (1, 'FEL 1'),
+    (2, 'FEL 2'),
+    (3, 'FEL 3'),
+    (4, 'EXECUÇÃO'),
+)
 
 class Projeto(models.Model):
     owner = models.ForeignKey(Owner, on_delete=models.PROTECT, blank=True, null=True)
@@ -20,6 +26,7 @@ class Projeto(models.Model):
     suprimentos = models.BooleanField(default=False)
     gestao_materiais = models.BooleanField(default=False)
     comissionamento = models.BooleanField(default=False)
+    fase = models.IntegerField(choices=ROLE_CHOICE_EXECUCAO, default=1)
     ativo = models.BooleanField(default=True)
 
 

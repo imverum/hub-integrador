@@ -3,13 +3,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib import messages
 from apps.account.forms import UserEditFormAdmin, UserProfileEditFormAdmin
-from apps.core.models import Usuario_Unidade
-from apps.projeto.models import Usuario_Projeto
+from apps.core.models import Usuario_Unidade, Unidade
+from apps.projeto.models import Usuario_Projeto, Projeto
 from apps.usuario.forms import UserProfileEditForm, RegisterFormset, UserEditForm, UnidadeAddForm, ProjetoUsuarioAddForm
 from apps.usuario.models import Profile, ROLE_CHOICE
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
+from django.db.models import Q
 @csrf_exempt
 @login_required
 def list_user(request):
@@ -67,9 +67,13 @@ def profile_detail(request):
     projetos = Usuario_Projeto.objects.filter(usuario_id=usuario)
     profile = Profile.objects.get(user=usuario)
     profile_perfil = Profile.objects.get(user=request.user)
+    usuario_query = profile_perfil.user
+    unidades_queryset = Unidade.objects.filter(owner=profile_perfil.owner)
     form_profile = UserEditForm(request.POST or None, instance=profile)
-    form_unidade = UnidadeAddForm(request.POST or None, instance=usuario)
-    form_projeto_usuario = ProjetoUsuarioAddForm(request.POST or None)
+    form_unidade = UnidadeAddForm(request.POST or None, unidades_queryset=unidades_queryset)
+    projetos_queryset = Projeto.objects.filter(Q(unidade__in=usuario_query.usuario_unidade_set.all().values('unidade')))
+    form_projeto_usuario = ProjetoUsuarioAddForm(request.POST or None, projetos_queryset=projetos_queryset)
+
 
     return render(request, 'profile.html', {'projetos':projetos, 'usuario':usuario, 'form_profile':form_profile, 'form_unidade':form_unidade,'unidades':unidades, 'profile':profile, 'profile_perfil':profile_perfil, 'form_projeto_usuario':form_projeto_usuario})
 
@@ -109,8 +113,11 @@ def profile_edit(request, id):
 @login_required
 def adicionar_unidade(request, id):
     usuario = User.objects.get(id=id)
+
+    profile = Profile.objects.get(user=usuario)
+    unidades_queryset = Unidade.objects.filter(owner=profile.owner)
     unidade_instance = Usuario_Unidade()
-    form_unidade = UnidadeAddForm(request.POST or None, instance=unidade_instance)
+    form_unidade = UnidadeAddForm(request.POST or None, instance=unidade_instance, unidades_queryset=unidades_queryset)
     print(form_unidade.is_valid())
 
     if request.method == "POST":
@@ -140,8 +147,10 @@ def deletar_unidade(request, id):
 @login_required
 def adicionar_projeto(request, id):
     usuario = User.objects.get(id=id)
+    profile = Profile.objects.get(user=usuario)
+    projetos_queryset = Projeto.objects.filter(owner=profile.owner)
     projeto_instance = Usuario_Projeto()
-    form_projeto_usuario = ProjetoUsuarioAddForm(request.POST or None, instance=projeto_instance)
+    form_projeto_usuario = ProjetoUsuarioAddForm(request.POST or None, instance=projeto_instance,projetos_queryset=projetos_queryset)
 
     if request.method == "POST":
         if form_projeto_usuario.is_valid():

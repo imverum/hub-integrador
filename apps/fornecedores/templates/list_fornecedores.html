@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+{% block main %}
+
+<div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Fornecedores Cadastrados</h4>
+
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" >Cadastrar Fornecedor</button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+                                                <th scope="col">fornecedor</th>
+                                                <th scope="col">cnpj</th>
+                                                <th scope="col">Endereço</th>
+                                                <th scope="col">Descrição</th>
+                                                <th scope="col">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for fornecedor in fornecedores %}
+                                            <tr>
+                                                <th>{{fornecedor.fornecedor}}</th>
+                                                <td>{{fornecedor.cnpj}}</td>
+                                                <td>{{fornecedor.pais}} / {{fornecedor.estado}} / {{fornecedor.bairro}} / {{fornecedor.rua}} / {{fornecedor.cep}}</td>
+                                                <td>{{fornecedor.descricao}}</td>
+                                                <td>
+
+                                                     <button type="button" class="btn btn-primary" onclick="atividade({{fornecedor.id}})" > <span class="fa fa-edit"></span></button>
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDeletCargo" onclick="atividadedelet({{fornecedor.id}})" > <span class="fa fa-trash"></span></button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="form" class="form-horizontal" method="post" action="{% url 'adicionar_fornecedor' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Cadastro Fornecedor</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id"  id="id" value="">
+
+                {{ fornecedor_form.as_p }}
+
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="formedit" class="form-horizontal" method="post" action="{% url 'fornecedor_edit' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Editar Fornecedor</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id_edit"  id="id_edit" value="">
+                <label for="fornecedor_edit">Fornecedor:</label>
+                <input type="text" name="fornecedor" class="form-control" required="" id="fornecedor_edit">
+
+                <label for="cnpj_edit">CNPJ:</label>
+                <input type="text" name="cnpj" class="form-control" required="" id="cnpj_edit">
+                <label for="id_pais_edit">Pais:</label>
+                <input type="text" name="pais" class="form-control" required="" id="id_pais_edit">
+                <label for="id_estado_edit">Estado:</label>
+                <input type="text" name="estado" class="form-control" required="" id="id_estado_edit">
+                <label for="id_bairro_edit">Bairro:</label>
+                <input type="text" name="bairro" class="form-control" required="" id="id_bairro_edit">
+                <label for="id_rua_edit">Rua:</label>
+                <input type="text" name="rua" class="form-control" required="" id="id_rua_edit">
+                <label for="id_cep_edit">Cep:</label>
+                <input type="text" name="cep" class="form-control" required="" id="id_cep_edit">
+                <label for="id_descricao_edit">Descricao:</label>
+                <input type="text" name="descricao" class="form-control" required="" id="id_descricao_edit">
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Editar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+<div id="myModalConfirmDeletCargo" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <form name="form" id="formdelettask" class="form-horizontal" method="post" action="{% url 'fornecedor_deletar' %}">
+    {% csrf_token %}
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Deletar Fornecedor</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <input type="hidden" name="id_delet"  id="id_delet" value="">
+                <h3>Você deseja deletar essa Fornecedor? Essa ação não tem volta!</h3>
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Deletar</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block jsadd %}
+
+<script>
+    function atividade(id){
+        console.log(id);
+        $.ajax({
+            url: "/fornecedores/fornecedor_edit_ajax/" + id,
+            async: true,
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+
+                $('#form').trigger("reset");
+
+                $('#fornecedor_edit').val(data.fornecedor);
+                $('#cnpj_edit').val(data.cnpj);
+                $('#id_pais_edit').val(data.pais);
+                $('#id_estado_edit').val(data.estado);
+                $('#id_bairro_edit').val(data.bairro);
+                $('#id_rua_edit').val(data.rua);
+                $('#id_cep_edit').val(data.cep);
+                $('#id_descricao_edit').val(data.descricao);
+
+
+                $('#id_edit').val(id);
+
+                $('#myModalEdit').modal('show');
+
+            }
+        });
+    };
+
+    function atividadedelet(id){
+      document.getElementById("id_delet").value = id;
+      console.log(id)
+    };
+
+</script>
+{% endblock  %}

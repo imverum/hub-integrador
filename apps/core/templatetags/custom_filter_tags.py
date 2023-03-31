@@ -51,3 +51,13 @@ def status_projeto(projeto_id):
         status = "Inativo"
 
     return status
+
+
+@register.filter
+def render_sim_nao(id):
+    if id == 1:
+        render = "SIM"
+    else:
+        render = "NÃO"
+
+    return render

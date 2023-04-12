@@ -26,8 +26,9 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 #DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://hub-integrador-production.up.railway.app/', 'https://*.hub-integrador-production.up.railway.app/', 'http://127.0.0.1:8000/']
+ALLOWED_HOSTS = ['hubintegrador.azurewebsites.net']
+
+CSRF_TRUSTED_ORIGINS = ['https://hubintegrador.azurewebsites.net/', 'https://*.hubintegrador.azurewebsites.net/', 'http://127.0.0.1:8000/']
 
 
 # Application definition

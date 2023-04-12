@@ -10,6 +10,7 @@ from apps.usuario.models import Profile, ROLE_CHOICE
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
+
 @csrf_exempt
 @login_required
 def list_user(request):

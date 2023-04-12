@@ -20,7 +20,7 @@ class FluxoEmissao(models.Model):
 
 
     class Meta:
-        db_table = 'dbo_fluxo_emissao'
+        db_table = 'fluxo_emissao'
         verbose_name_plural = 'BD Fluxo Emissao'
         verbose_name = 'BD Fluxo Emissao'
 
@@ -32,7 +32,7 @@ class ExecucaoLD(models.Model):
     unidade = models.ForeignKey(Unidade, on_delete=models.CASCADE, blank=True, null=True)
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
     data_corte = models.DateField(blank=True, null=True)
-    data_execucao = models.DateField(auto_now=True, blank=True, null=True)
+    data_execucao = models.DateTimeField(auto_now=True, blank=True, null=True)
     inicio = models.DateTimeField(blank=True, null=True)
     termino = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length= 200, blank=True, null=True)
@@ -40,7 +40,7 @@ class ExecucaoLD(models.Model):
 
 
     class Meta:
-        db_table = 'dbo_execucao_ld'
+        db_table = 'execucao_ged'
         verbose_name_plural = 'BD Execucao LD'
         verbose_name = 'BD Execucao LD'
 
@@ -59,14 +59,14 @@ class StageLd(models.Model):
     tipo_documento = models.CharField(max_length= 200, blank=True, null=True)
     formato = models.CharField(max_length= 200, blank=True, null=True)
     paginas = models.IntegerField(blank=True, null=True)
-    a1_equivalente = models.DecimalField(max_digits= 200,decimal_places=2,  blank=True, null=True)
+    a1_equivalente = models.DecimalField(max_digits= 38,decimal_places=2,  blank=True, null=True)
     codigo_atividade = models.CharField(max_length= 200, blank=True, null=True)
     work_package_area = models.CharField(max_length= 200,blank=True, null=True)
     work_package = models.CharField(max_length= 200, blank=True, null=True)
 
 
     class Meta:
-        db_table = 'db_stage_ld'
+        db_table = 'ld_Stage'
         verbose_name_plural = 'BD Stage LD'
         verbose_name = 'BD Stage LD'
 
@@ -88,7 +88,7 @@ class ConfiguraLd(models.Model):
         coluna = models.CharField(max_length=200, blank=True, null=True)
 
         class Meta:
-            db_table = 'db_configura_ld'
+            db_table = 'configura_ld'
             verbose_name_plural = 'BD Configura LD'
             verbose_name = 'BD Configura LD'
 
@@ -103,7 +103,7 @@ class lod_processamento(models.Model):
     log = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = 'db_log_processamento_ld'
+        db_table = 'log_processamento_ld'
         verbose_name_plural = 'BD Log processamento LD'
         verbose_name = 'BD Log processamento LD'
 
@@ -144,7 +144,7 @@ class StageGED(models.Model):
 
 
     class Meta:
-        db_table = 'db_stage_ged'
+        db_table = 'ged_Stage'
         verbose_name_plural = 'BD Stage GED'
         verbose_name = 'BD Stage GED'
 
@@ -180,7 +180,7 @@ class ConfiguraGED(models.Model):
 
 
         class Meta:
-            db_table = 'db_configura_ged'
+            db_table = 'configura_ged'
             verbose_name_plural = 'BD Configura GED'
             verbose_name = 'BD Configura GED'
 
@@ -197,6 +197,24 @@ class FluxoDevolucaoGED(models.Model):
 
 
     class Meta:
-        db_table = 'dbo_fluxo_devolucao_ged'
+        db_table = 'fluxo_devolucao_ged'
         verbose_name_plural = 'BD Fluxo Devolucao GED'
         verbose_name = 'BD Fluxo Devolucao GED'
+
+
+class ADFGED(models.Model):
+    execucao = models.ForeignKey(ExecucaoLD, on_delete=models.PROTECT, blank=True, null=True)
+
+    class Meta:
+        db_table = 'execucao_GED_adf'
+        verbose_name_plural = 'BD GED ADF'
+        verbose_name = 'BD GED ADF'
+
+
+class ADFLD(models.Model):
+    execucao = models.ForeignKey(ExecucaoLD, on_delete=models.PROTECT, blank=True, null=True)
+
+    class Meta:
+        db_table = 'execucao_LD_adf'
+        verbose_name_plural = 'BD LD ADF'
+        verbose_name = 'BD GED ADF'

@@ -1,5 +1,5 @@
 import pandas as pd
-from apps.ged.models import StageLd, FluxoEmissao, ConfiguraLd, lod_processamento, ExecucaoLD
+from apps.ged.models import StageLd, FluxoEmissao, ConfiguraLd, lod_processamento, ExecucaoLD, ADFLD
 
 from apps.projeto.models import Projeto
 import xlsxwriter as xls
@@ -90,6 +90,10 @@ def run_ld(arquivold_file, projeto_id, ld, request):
                 a1_equivalente=a1_equivalente,
                 codigo_atividade=codigo_atividade,
                 )
+
+            carga_adf_ld = ADFLD.objects.create(
+                execucao=ld,
+            )
 
 
 def valida_colunadf(df_ld,ld, request, configuracoes ):

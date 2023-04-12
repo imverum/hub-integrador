@@ -11,3 +11,5 @@ def home(request):
 
     contexto = {'profile':profile}
     return render(request, 'index.html', contexto)
+
+

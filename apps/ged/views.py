@@ -1,6 +1,10 @@
+import os
+
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 import io
+
+from apps.core.conector_blob_arquivos import conector_blob
 from apps.fornecedores.models import Fornecedores
 from apps.ged.etl_ged import run_ged
 from apps.ged.etl_ld import run_ld, criar_planilha_log
@@ -12,6 +16,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.http import JsonResponse
+from azure.storage.blob import BlobServiceClient
+
+
+
+# obtenha a instância BlobServiceClient
+blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=verumsys;AccountKey=zsjENq7RHecRcbSOGJrIjaXdV/z4kh0KtTsf/J/xy1FeANFcnXSnh6LDytspbpbF4Q5OwJOK4UnC+ASt4uembg==;EndpointSuffix=core.windows.net")
 
 @csrf_exempt
 @login_required
@@ -125,11 +135,12 @@ def execucao_ld(request):
             ld.profile = profile
 
             ld.tipo = 'LD'
+            ld.save()
 
             arquivold_file = request.FILES.get('arquivold')
             if arquivold_file != None:
-
-                ld.arquivold = arquivold_file
+                blob_name = conector_blob(ld, arquivold_file) # função para salvar o arquivo na storage
+                ld.arquivold = blob_name
 
                 ld.status = 'Finalizado'
                 ld.save()
@@ -156,7 +167,7 @@ def execucao_ld(request):
                         'form_projeto_ged': form_projeto_ged, 'form_projeto_ld': form_projeto_ld, 'usuario': usuario,
                         'profile': profile}
 
-                return render(request, 'projeto_detail.html', contexto)
+                return render(request, 'projeto_ged.html', contexto)
 
 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -255,14 +266,16 @@ def execucao_ged(request):
 
             ged.tipo = 'GED'
 
-            arquivold_file = request.FILES.get('arquivold')
-            if arquivold_file != None:
-                ged.arquivold = arquivold_file
+            arquivo_file = request.FILES.get('arquivold')
+            if arquivo_file != None:
+
+                blob_name = conector_blob(ld=ged, arquivo_file=arquivo_file)  # função para salvar o arquivo na storage
+                ged.arquivold = blob_name
 
                 ged.status = 'Finalizado'
                 ged.save()
 
-            run_ged(arquivold_file, projeto_id, ged, request)
+            run_ged(arquivo_file, projeto_id, ged, request)
             if ged.status == 'ERRO':
                 projeto = ged.projeto
                 usuario = request.user

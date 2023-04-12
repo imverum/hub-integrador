@@ -11,6 +11,11 @@ class Owner(models.Model):
     def __str__(self):
         return self.owner
 
+    class Meta:
+        db_table = 'owner'
+        verbose_name_plural = 'DB Unidade'
+        verbose_name = 'DB Unidade'
+
 class Unidade(models.Model):
     unidade = models.CharField(max_length=100)
     owner = models.ForeignKey(Owner, on_delete= models.PROTECT)
@@ -25,6 +30,11 @@ class Unidade(models.Model):
     def __str__(self):
         return self.unidade
 
+    class Meta:
+        db_table = 'unidade'
+        verbose_name_plural = 'DB Unidade'
+        verbose_name = 'DB Unidade'
+
 
 class Usuario_Unidade(models.Model):
     unidade = models.ForeignKey(Unidade, on_delete= models.CASCADE)
@@ -32,6 +42,6 @@ class Usuario_Unidade(models.Model):
 
 
     class Meta:
-        db_table = 'db_unidade_usuario'
+        db_table = 'unidade_usuario'
         verbose_name_plural = 'DB Unidade Usuario'
         verbose_name = 'DB Unidade Usuario'

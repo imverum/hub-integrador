@@ -49,13 +49,17 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        {% for execucao in execucoes %}
+                                        {% for execucao in execucoes_page %}
                                             <tr>
                                                 <th>{{execucao.tipo}}</th>
                                                 <td>{{execucao.profile.nome}}</td>
                                                 <td>{{execucao.data_execucao| date:"d/m/Y"}}</td>
                                                 <td>{{execucao.data_corte| date:"d/m/Y"}}</td>
-                                                <td><a href="{% url 'download_arquivo' execucao.id%}">{{execucao.arquivold}}</a></td>
+                                                {% if execucao.arquivold %}
+                                                <td><a href="{% url 'download_file' file_name=execucao.arquivold.name|base_name %}">{{execucao.arquivold}}</a></td>
+                                                {% else %}
+                                                <td>O Arquivo não foi encontrado</td>
+                                                {% endif %}
                                                 {% if execucao.status == "ERRO" %}
                                                 <td><a class="btn btn-info" href="{% url 'exportar_log' execucao.id%}">Log</a></td>
                                                 {% else %}
@@ -75,6 +79,7 @@
                                     </table>
                                 </div>
                             </div>
+                            {% include 'paginator.html' with page=posts %}
                         </div>
                     </div>
 

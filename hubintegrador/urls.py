@@ -12,6 +12,8 @@ urlpatterns = [
     path('projetos/', include('apps.projeto.urls')),
     path('ged/', include('apps.ged.urls')),
     path('fornecedores/', include('apps.fornecedores.urls')),
+    path('crono_master/', include('apps.cronograma_master.urls')),
+    path('master_index/', include('apps.master_index.urls')),
 ]
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) # REVISAR 14
+    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) # REVISAR

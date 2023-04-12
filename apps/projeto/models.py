@@ -31,7 +31,7 @@ class Projeto(models.Model):
 
 
     class Meta:
-        db_table = 'd_projetos'
+        db_table = 'projetos'
         verbose_name_plural = 'BD Projetos'
         verbose_name = 'BD Projetos'
 
@@ -46,6 +46,6 @@ class Usuario_Projeto(models.Model):
 
 
     class Meta:
-        db_table = 'db_projeto_usuario'
+        db_table = 'projeto_usuario'
         verbose_name_plural = 'DB Projeto Usuario'
         verbose_name = 'DB Projeto Usuario'

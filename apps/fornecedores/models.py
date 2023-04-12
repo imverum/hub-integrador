@@ -16,7 +16,7 @@ class Fornecedores(models.Model):
     descricao = models.CharField(max_length= 200, blank=True, null=True)
 
     class Meta:
-        db_table = 'dbo_fornecedor'
+        db_table = 'fornecedor'
         verbose_name_plural = 'BD Fornecedor'
         verbose_name = 'BD Fornecedor'
 
@@ -33,7 +33,7 @@ class FornecedoresRepresentante(models.Model):
 
 
     class Meta:
-        db_table = 'dbo_fornecedor_representante'
+        db_table = 'fornecedor_representante'
         verbose_name_plural = 'BD Fornecedor Representante'
         verbose_name = 'BD Fornecedor Representante'
 

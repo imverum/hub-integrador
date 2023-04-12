@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+
+{% block main %}
+{% include 'message.html' %}
+
+<nav arial-label="breadcrumb">
+        <ol class="breadcrumb">
+            {%if projeto.cronograma_master == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
+            {% endif %}
+
+            <li class="breadcrumb-item active" selected><a class="btn btn-light" href="{% url 'projeto_home' projeto.id %}">Home</a></li>
+
+            {%if projeto.cronograma_master == True %}
+            <li class="breadcrumb-item">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">+ Ações</button>
+                                    <div class="dropdown-menu" x-placement="top-start" style="position: absolute; transform: translate3d(0px, -2px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                      <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalCronograma">Carga Cronograma</button>
+                                                      <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalCurva">Carga Curva</button>
+                                                      <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalConfiguraCronograma">Configurar Cronograma</button>
+                                    </div>
+            </li>
+            {% endif %}
+        </ol>
+</nav>
+<div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Cronograma  -  Logs</h4>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+
+                                                <th scope="col">Usuário</th>
+                                                <th scope="col">Data Execução</th>
+                                                <th scope="col">Arquivo</th>
+                                                <th scope="col">Log</th>
+                                                <th scope="col">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for execucao in execucoes_page %}
+                                            <tr>
+                                                <td>{{execucao.profile.nome}}</td>
+                                                <td>{{execucao.data_execucao| date:"d/m/Y"}}</td>
+                                                {% if execucao.arquivo %}
+                                                <td><a href="{% url 'download_file' file_name=execucao.arquivo.name|base_name %}">{{execucao.arquivo}}</a></td>
+                                                {% else %}
+                                                <td>O Arquivo não foi encontrado</td>
+                                                {% endif %}
+                                                {% if execucao.status == "ERRO" %}
+                                                <td><a class="btn btn-info" href="{% url 'exportar_log' execucao.id%}">Log</a></td>
+                                                {% else %}
+                                                <td>Sem Log</td>
+                                                {% endif %}
+                                                {% if execucao.status == 'ERRO' %}
+                                                <td style="color:red ;font-weight: bold">{{execucao.status}}</td>
+                                                {% else %}
+                                                <td style="color:green ;font-weight: bold">{{execucao.status}}</td>
+                                                {% endif %}
+
+
+
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% include 'paginator.html' with page=posts %}
+                        </div>
+                    </div>
+
+
+<form name="form" id="formcurva"  method="post" action="{% url 'execucao_cronograma_master' %}" enctype="multipart/form-data">
+{% csrf_token %}
+    <!-- Modal -->
+<div class="modal fade show" id="myModalCurva" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Carga Curva</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" >
+          <div class="form-group">
+              <div class="col-sm-12">
+                  <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+
+                {{ form_projeto_crono_master.as_p }}
+
+              </div>
+          </div>
+
+      </div>
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Carga</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</form>
+
+<form name="form" id="form"  method="post" action="{% url 'execucao_cronograma_master_xer' %}" enctype="multipart/form-data">
+{% csrf_token %}
+    <!-- Modal -->
+<div class="modal fade show" id="myModalCronograma" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Carga Cronograma</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" >
+          <div class="form-group">
+              <div class="col-sm-12">
+                  <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+
+                {{ form_projeto_crono_master_xer.as_p }}
+
+              </div>
+          </div>
+
+      </div>
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Carga</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</form>
+
+
+<form name="form" id="formld"  method="post" action="" enctype="multipart/form-data">
+{% csrf_token %}
+    <!-- Modal -->
+<div class="modal fade show" id="myModalConfiguraCronograma" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Configuração Cronograma Master</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" >
+          <div class="form-group">
+              <div class="col-sm-12">
+                  <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+
+                {{ form_configura.as_p }}
+
+              </div>
+          </div>
+
+      </div>
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</form>
+
+
+{% endblock %}
+
+{% block jsadd %}
+
+<script>
+    function atividade(id){
+        console.log(id);
+        $.ajax({
+            url: "/projetos/projeto_edit_ajax/" + id,
+            async: true,
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+
+                $('#formedit').trigger("reset");
+
+                $('#id_projeto_edit').val(data.projeto);
+                $('#id_codigo_projeto_edit').val(data.codigo_projeto);
+                $('#id_descricao_edit').val(data.descricao);
+                $('#id_inicio_projeto_edit').val(data.inicio_projeto);
+                $('#id_termino_projeto_edit').val(data.termino_projeto);
+
+                $('#id_edit').val(id);
+
+                $('#myModalEdit').modal('show');
+
+            }
+        });
+    };
+
+    function atividadedelet(id){
+      document.getElementById("id_delet").value = id;
+      console.log(id)
+    };
+
+</script>
+{% endblock  %}

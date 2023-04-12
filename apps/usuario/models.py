@@ -19,7 +19,7 @@ class Profile(models.Model):
 
 
     class Meta:
-        db_table = 'db_profile'
+        db_table = 'profile'
         verbose_name_plural = 'BD Profile'
         verbose_name = 'BD Profile'
 

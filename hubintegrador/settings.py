@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = config('DEBUG', default=False, cast=bool)
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
+#DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://hub-integrador-production.up.railway.app/', 'https://*.hub-integrador-production.up.railway.app/', 'http://127.0.0.1:8000/']
@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'apps.projeto.apps.ProjetoConfig',
     'apps.ged.apps.GedConfig',
     'apps.fornecedores.apps.FornecedoresConfig',
+    'apps.cronograma_master.apps.CronogramaMasterConfig',
+    'apps.master_index.apps.MasterIndexConfig',
 ]
 
 MIDDLEWARE = [
@@ -84,11 +86,27 @@ WSGI_APPLICATION = 'hubintegrador.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'mssql',
+        'NAME': config('NAME'),
+        'USER': config('USER'),
+        'PASSWORD': config('PASSWORD'),
+        'HOST': config('HOST'),
+        'PORT': '',
+
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+            'host_is_server': False,
+        },
+    },
 }
 
 
@@ -139,7 +157,15 @@ STATIC_URL = 'apps/core/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'Apps/core/static/')]
 
+
+#STORAGE_AZURE
+AZURE_ACCOUNT_NAME = 'verumsys'
+AZURE_ACCOUNT_KEY = 'zsjENq7RHecRcbSOGJrIjaXdV/z4kh0KtTsf/J/xy1FeANFcnXSnh6LDytspbpbF4Q5OwJOK4UnC+ASt4uembg=='
+AZURE_CONTAINER = 'interfacehubintegrador'
+AZURE_CONNECTION_STRING = f'DefaultEndpointsProtocol=https;AccountName={AZURE_ACCOUNT_NAME};AccountKey={AZURE_ACCOUNT_KEY};EndpointSuffix=core.windows.net'
+
 #CAMINHO ARQUIVOS
+#DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "apps/core/static/media/")
 

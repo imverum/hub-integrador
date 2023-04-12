@@ -1,7 +1,8 @@
 import pandas as pd
 
 from apps.core.tratar_datas import tratar_data
-from apps.ged.models import StageLd, FluxoEmissao, ConfiguraLd, lod_processamento, ExecucaoLD, ConfiguraGED, StageGED
+from apps.ged.models import StageLd, FluxoEmissao, ConfiguraLd, lod_processamento, ExecucaoLD, ConfiguraGED, StageGED, \
+    ADFGED
 from datetime import datetime
 from apps.projeto.models import Projeto
 import xlsxwriter as xls
@@ -130,6 +131,9 @@ def run_ged(arquivold_file, projeto_id, ged, request):
                 responsavel=atual_responsavel,
                 rev_num="Conta"
                 )
+            carga_adf_ged = ADFGED.objects.create(
+                execucao=ged,
+            )
 
 
 def valida_colunadf(df_ged,ged, configuracoes):

@@ -64,7 +64,7 @@ def user_login(request):
 def register(request):
     user = request.user
     profile = Profile.objects.get(user=user)
-    qtd_usuarios = Profile.objects.filter(owner=profile.owner).count()
+    qtd_usuarios = Profile.objects.filter(unidade=profile.unidade).count()
     owner = Owner.objects.get(owner=profile.owner)
     #if qtd_usuarios >= owner.qtd_user:
     #    messages.error(request, 'Quantidade máxima de Usuarios cadastrada atingida, entre em contato com a administração do sistema!')

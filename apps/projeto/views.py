@@ -25,7 +25,11 @@ def register_projeto(request):
     unidade = Unidade.objects.get(id=unidade_id)
     usuario = request.user
     profile = Profile.objects.get(user=usuario)
+    projetos = Projeto.objects.filter(unidade=unidade).count()
     if request.method == 'POST':
+        if projetos >= unidade.total_projetos:
+            messages.success(request, "Você não pode criar um projeto novo, sua capacidade máxima de projetos ativos foi atingida!")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         form_projeto = ProjetoFormAdd(request.POST or None)
 
@@ -256,7 +260,7 @@ def projeto_crono_master(request, id):
 
 
     form_projeto_crono_master = CronogramaMasterFormCarga(request.POST or None)
-    form_projeto_crono_master_xer = CronogramaMasterFormCargaXer(request.POST or None)
+
 
 
     configura_crono_master_instance = ConfiguraCronogramaMaster.objects.get(projeto=projeto)
@@ -274,7 +278,7 @@ def projeto_crono_master(request, id):
     except EmptyPage:
         execucoes_page = paginator.page(paginator.num_pages)
 
-    contexto = {'form_projeto_crono_master_xer':form_projeto_crono_master_xer,'projeto':projeto, 'form_configura':form_configura, 'execucoes_page':execucoes_page, 'page_obj':page_obj,'usuario':usuario, 'profile':profile, 'form_projeto_crono_master':form_projeto_crono_master}
+    contexto = {'projeto':projeto, 'form_configura':form_configura, 'execucoes_page':execucoes_page, 'page_obj':page_obj,'usuario':usuario, 'profile':profile, 'form_projeto_crono_master':form_projeto_crono_master}
 
 
     return render(request, 'projeto_crono_master.html', contexto)
@@ -314,3 +318,23 @@ def projeto_master_index(request, id):
 
 
     return render(request, 'projeto_master_index.html', contexto)
+
+
+def projeto_status(request, id):
+    projeto = Projeto.objects.get(id=id)
+    projetos = Projeto.objects.filter(unidade=projeto.unidade).count()
+
+    if projeto.ativo:
+        projeto.ativo = False
+
+    else:
+        if projetos >= projeto.unidade.total_projetos:
+            messages.success(request, "Você não pode ativar esse projeto, pois já está com a capacidade máxima de projetos ativos!")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        else:
+            projeto.ativo = True
+
+
+    projeto.save()
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

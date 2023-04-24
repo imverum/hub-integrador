@@ -67,6 +67,7 @@ def profile_detail(request):
     unidades = Usuario_Unidade.objects.filter(usuario_id=usuario)
     projetos = Usuario_Projeto.objects.filter(usuario_id=usuario)
     profile = Profile.objects.get(user=usuario)
+    usuario_profile = request.user
     profile_perfil = Profile.objects.get(user=request.user)
     usuario_query = profile_perfil.user
     unidades_queryset = Unidade.objects.filter(owner=profile_perfil.owner)
@@ -76,18 +77,39 @@ def profile_detail(request):
     form_projeto_usuario = ProjetoUsuarioAddForm(request.POST or None, projetos_queryset=projetos_queryset)
 
 
-    return render(request, 'profile.html', {'projetos':projetos, 'usuario':usuario, 'form_profile':form_profile, 'form_unidade':form_unidade,'unidades':unidades, 'profile':profile, 'profile_perfil':profile_perfil, 'form_projeto_usuario':form_projeto_usuario})
+    return render(request, 'profile.html', {'projetos':projetos, 'usuario_profile':usuario_profile, 'usuario':usuario, 'form_profile':form_profile, 'form_unidade':form_unidade,'unidades':unidades, 'profile':profile, 'profile_perfil':profile_perfil, 'form_projeto_usuario':form_projeto_usuario})
 
 
 @csrf_exempt
 @login_required
 def profile_detail_visita(request, id):
-    usuario = User.objects.get(id=id)
-    unidades = Usuario_Unidade.objects.filter(usuario=usuario)
-    form = UserEditForm(request.POST or None, instance=usuario)
-    form_unidade = UnidadeAddForm(request.POST or None, instance=usuario)
+    usuario = request.user
+    profile = Profile.objects.get(user=usuario)
 
-    return render(request, 'profile.html', {'usuario':usuario, 'form':form, 'form_unidade':form_unidade,'unidades':unidades})
+
+    usuario_profile = User.objects.get(id=id)
+    profile_perfil = Profile.objects.get(user=usuario_profile)
+
+
+    unidades = Usuario_Unidade.objects.filter(usuario_id=profile_perfil.user)
+    projetos = Usuario_Projeto.objects.filter(usuario_id=profile_perfil.user)
+
+    form_profile = UserEditForm(request.POST or None, instance=profile_perfil)
+
+    usuario_query = profile_perfil.user
+    unidades_queryset = Unidade.objects.filter(owner=profile_perfil.owner)
+    form_unidade = UnidadeAddForm(request.POST or None, unidades_queryset=unidades_queryset)
+
+    projetos_queryset = Projeto.objects.filter(Q(unidade__in=usuario_query.usuario_unidade_set.all().values('unidade')))
+    form_projeto_usuario = ProjetoUsuarioAddForm(request.POST or None, projetos_queryset=projetos_queryset)
+
+
+
+
+    return render(request, 'profile.html',
+                  {'projetos': projetos, 'usuario': usuario, 'form_profile': form_profile, 'form_unidade': form_unidade,
+                   'unidades': unidades, 'profile': profile, 'profile_perfil': profile_perfil,
+                   'form_projeto_usuario': form_projeto_usuario, 'usuario_profile':usuario_profile})
 
 @csrf_exempt
 @login_required

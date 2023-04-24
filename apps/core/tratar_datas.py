@@ -4,8 +4,16 @@ from datetime import datetime
 
 def tratar_data(data):
     try:
+        print(data)
         data_variavel = datetime.strptime(data, "%d/%m/%Y %H:%M")
         return data_variavel
+    except:
+        pass
+
+    try:
+        data_variavel = datetime.strptime(data, "%DD/%MM/%YYYY")
+        return data_variavel
+
     except:
         pass
 

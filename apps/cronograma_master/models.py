@@ -34,7 +34,7 @@ class StageCronogramaMaster(models.Model):
     unidade = models.CharField(max_length= 200, blank=True, null=True)
 
     class Meta:
-        db_table = 'cronograma_master_stage_curvaa'
+        db_table = 'cronograma_master_stage_curva'
         verbose_name_plural = 'BD Stage Cronograma Master'
         verbose_name = 'BD Stage Cronograma Master'
 
@@ -98,7 +98,7 @@ class XerActvcode(models.Model):
     seq_num = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        db_table = 'xer_actvcode'
+        db_table = 'XER.ACTVCODE'
         verbose_name_plural = 'BD XER Actvcode'
         verbose_name = 'BD XER Actvcode'
 
@@ -120,7 +120,7 @@ class XerActvType(models.Model):
 
 
     class Meta:
-        db_table = 'xer_actvtype'
+        db_table = 'XER.ACTVTYPE'
         verbose_name_plural = 'BD XER ActvType'
         verbose_name = 'BD XER ActvType'
 
@@ -143,7 +143,7 @@ class XerCalendar(models.Model):
     day_hr_cnt = models.CharField(max_length=300, blank=True, null=True)
 
     class Meta:
-        db_table = 'xer_calendar'
+        db_table = 'XER.CALENDAR'
         verbose_name_plural = 'BD XER Calendar'
         verbose_name = 'BD XER Calendar'
 
@@ -169,7 +169,7 @@ class XerProject(models.Model):
 
 
     class Meta:
-        db_table = 'xer_project'
+        db_table = 'XER.PROJECT'
         verbose_name_plural = 'BD XER Project'
         verbose_name = 'BD XER Project'
 
@@ -194,7 +194,7 @@ class XerProJWBS(models.Model):
     parent_wbs_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        db_table = 'xer_projwbs'
+        db_table = 'XER.PROJWBS'
         verbose_name_plural = 'BD XER ProJWBS'
         verbose_name = 'BD XER ProJWBS'
 
@@ -221,7 +221,7 @@ class XerRSRC(models.Model):
 
 
     class Meta:
-        db_table = 'xer_rsrc'
+        db_table = 'XER.RSRC'
         verbose_name_plural = 'BD XER RSRC'
         verbose_name = 'BD XER RSRC'
 
@@ -282,7 +282,7 @@ class XerTask(models.Model):
 
 
     class Meta:
-        db_table = 'xer_task'
+        db_table = 'XER.TASK'
         verbose_name_plural = 'BD XER Task'
         verbose_name = 'BD XER Task'
 
@@ -295,15 +295,14 @@ class XerTaskACTV(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
     execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
 
-    actv_code_id = models.IntegerField(blank=True, null=True)
-    parent_actv_code_id = models.CharField(max_length=300, blank=True, null=True)
+    task_id = models.IntegerField(blank=True, null=True)
     actv_code_type_id = models.IntegerField(blank=True, null=True)
-    actv_code_name = models.CharField(max_length=300, blank=True, null=True)
-    short_name = models.CharField(max_length=300, blank=True, null=True)
-    seq_num = models.IntegerField(blank=True, null=True)
+    actv_code_id = models.IntegerField(blank=True, null=True)
+    proj_id = models.IntegerField(blank=True, null=True)
+
 
     class Meta:
-        db_table = 'xer_taskactv'
+        db_table = 'XER.TASKACTV'
         verbose_name_plural = 'BD XER TaskACTV'
         verbose_name = 'BD XER TaskACTV'
 
@@ -325,7 +324,7 @@ class XerTaskPRED(models.Model):
     lag_hr_cnt = models.DecimalField(max_digits= 38, decimal_places= 5, blank=True, null=True)
 
     class Meta:
-        db_table = 'xer_taskpred'
+        db_table = 'XER.TASKPRED'
         verbose_name_plural = 'BD XER TaskPRED'
         verbose_name = 'BD XER TaskPRED'
 
@@ -346,7 +345,7 @@ class XerUDFType(models.Model):
 
 
     class Meta:
-        db_table = 'xer_UDFType'
+        db_table = 'XER.UDFTYPE'
         verbose_name_plural = 'BD XER UDFType'
         verbose_name = 'BD XER UDFType'
 
@@ -366,7 +365,7 @@ class XerUDFValue(models.Model):
     udf_code_id = models.CharField(max_length=300, blank=True, null=True)
 
     class Meta:
-        db_table = 'xer_udfvalue'
+        db_table = 'XER.UDFVALUE'
         verbose_name_plural = 'BD XER UDFValue'
         verbose_name = 'BD XER UDFValue'
 
@@ -382,3 +381,5 @@ class ADFCronoMasterCronogramas(models.Model):
         db_table = 'execucao_cronograma_master_cronogramas_adf'
         verbose_name_plural = 'BD Execucao Cronograma Master Cronogramas ADF'
         verbose_name = 'BD Execucao Cronograma Master Cronogramas ADF'
+
+

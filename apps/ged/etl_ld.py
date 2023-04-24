@@ -1,4 +1,6 @@
 import pandas as pd
+
+from apps.core.tratar_datas import tratar_data
 from apps.ged.models import StageLd, FluxoEmissao, ConfiguraLd, lod_processamento, ExecucaoLD, ADFLD
 
 from apps.projeto.models import Projeto
@@ -24,7 +26,8 @@ def run_ld(arquivold_file, projeto_id, ld, request):
 
     if ld.status != "ERRO":
     ################################leitura do excel
-
+        print(configuracoes["planilha"])
+        print(configuracoes["linha"])
         df_ld = pd.read_excel(arquivold_file, sheet_name =configuracoes["planilha"], skiprows = int(configuracoes["linha"]))
 
     ################################remove colunas em branco
@@ -32,11 +35,12 @@ def run_ld(arquivold_file, projeto_id, ld, request):
         df_ld = df_ld.drop(columns=df_ld.columns[0:int(configuracoes["coluna"])])
 
     ################################remove colunas em branco
-        df_ld = df_ld.rename(columns=df_ld.iloc[0])
 
-    ################################renomeia o nome das colunas
-        df_ld = df_ld.rename(columns=df_ld.iloc[0])
-        df_ld = df_ld.drop(df_ld.index[0])
+        print(df_ld)
+        print(df_ld.columns)
+
+
+
 
     ################################validando colunas
         valida_colunadf(df_ld,ld,request, configuracoes)
@@ -50,20 +54,52 @@ def run_ld(arquivold_file, projeto_id, ld, request):
                     print("passou")
                 except:
                     print("erro aqui")
-                numero_contratada = df_ld[configuracoes["numero_contratada"]].iloc[dado]
+                try:
+                    numero_contratada = df_ld[configuracoes["numero_contratada"]].iloc[dado]
+                    if pd.isna(numero_contratada):
+                        numero_contratada = None
+                except:
+                   pass
+
                 #titulo = df_ld[str(configuracoes.titulo)].iloc[dado]
-                status_ld = df_ld[configuracoes["status_ld"]].iloc[dado]
-                codigo_atividade = df_ld[configuracoes["codigo_atividade"]].iloc[dado]
+                try:
+                    status_ld = df_ld[configuracoes["status_ld"]].iloc[dado]
+                    if pd.isna(status_ld):
+                        status_ld = None
+                except:
+                   pass
+                try:
+                    codigo_atividade = df_ld[configuracoes["codigo_atividade"]].iloc[dado]
+                    if pd.isna(codigo_atividade):
+                        codigo_atividade = None
+                except:
+                   pass
 
-                data_emissao_preliminar = df_ld[configuracoes["data_emissão_inicial_prevista"]].iloc[dado]
+                try:
+                    data_emissao_preliminar = df_ld[configuracoes["data_emissão_inicial_prevista"]].iloc[dado]
+                    if pd.isna(codigo_atividade):
+                        codigo_atividade = None
+                except:
+                    pass
+                try:
+                    pagina = df_ld[configuracoes["paginas"]].iloc[dado]
+                    if pd.isna(pagina) or type(pagina) != int:
+                        pagina = None
+                except:
+                    pass
+                try:
+                    a1_equivalente = df_ld[configuracoes["a1_equivalente"]].iloc[dado]
+                    if pd.isna(a1_equivalente):
+                        a1_equivalente = None
+                except:
+                    pass
 
-                if type(data_emissao_preliminar) == float:
-                    data_emissao_preliminar = None
-
-
-                pagina = df_ld[configuracoes["paginas"]].iloc[dado]
-                a1_equivalente = df_ld[configuracoes["a1_equivalente"]].iloc[dado]
-                tipo_emissao = df_ld[configuracoes["tipo_emissao"]].iloc[dado]
+                try:
+                    tipo_emissao = df_ld[configuracoes["tipo_emissao"]].iloc[dado]
+                    if pd.isna(a1_equivalente):
+                        a1_equivalente = None
+                except:
+                    pass
 
                 try:
                     certifica = FluxoEmissao.objects.get(owner=projeto.unidade.owner, sigla_tipo_emissao=tipo_emissao)
@@ -84,7 +120,7 @@ def run_ld(arquivold_file, projeto_id, ld, request):
                 empresa = ld.fornecedor,
                 tipo_emissao_inicial = tipo_emissao,
                 certifica_na_1a_emissao= certifica,
-                data_emissão_inicial_prevista=data_emissao_preliminar,
+                data_emissão_inicial_prevista=tratar_data(data_emissao_preliminar),
                 status_ld=status_ld,
                 paginas=pagina,
                 a1_equivalente=a1_equivalente,

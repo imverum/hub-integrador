@@ -148,26 +148,11 @@ def execucao_ld(request):
 
             run_ld(arquivold_file, projeto_id, ld, request)
             if ld.status == 'ERRO':
-                
-                projeto = ld.projeto
-                usuario = request.user
-                profile = Profile.objects.get(user=usuario)
 
-                fornecedores_owner = Fornecedores.objects.filter(owner=profile.owner)
 
-                form_projeto_ged = GEDFormCarga(request.POST or None)
-                form_projeto_ld = LDFormCarga(request.POST or None, fornecedor_queryset=fornecedores_owner)
-
-                execucoes = ExecucaoLD.objects.filter(projeto=projeto).order_by('-data_execucao')
-                configura_ld_instance = ConfiguraLd.objects.get(projeto=projeto)
-                form_configura = ConfiguraLdForm(request.POST or None, instance=configura_ld_instance)
                 messages.error(request, "Não foi possível carregar o arquivo! verifique os logs de processamento!")
 
-                contexto = {'projeto': projeto, 'form_configura': form_configura, 'execucoes': execucoes,
-                        'form_projeto_ged': form_projeto_ged, 'form_projeto_ld': form_projeto_ld, 'usuario': usuario,
-                        'profile': profile}
-
-                return render(request, 'projeto_ged.html', contexto)
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -190,6 +175,9 @@ def download_arquivo(request, id):
     response['Content-Disposition'] = f'attachment; filename="{arquivold.arquivold}"'
 
     return response
+
+
+
 @login_required
 @csrf_exempt
 def configura_ld(request):
@@ -265,6 +253,7 @@ def execucao_ged(request):
             ged.profile = profile
 
             ged.tipo = 'GED'
+            ged.save()
 
             arquivo_file = request.FILES.get('arquivold')
             if arquivo_file != None:
@@ -274,33 +263,19 @@ def execucao_ged(request):
 
                 ged.status = 'Finalizado'
                 ged.save()
-
-            run_ged(arquivo_file, projeto_id, ged, request)
+            if not arquivo_file.name.endswith('xlsx'):
+                run_ged(arquivo_file, projeto_id, ged, request)
+                messages.error(request, "Só é aceito arquivo com extensão xlsx!")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             if ged.status == 'ERRO':
-                projeto = ged.projeto
-                usuario = request.user
-                profile = Profile.objects.get(user=usuario)
 
-                fornecedores_owner = Fornecedores.objects.filter(owner=profile.owner)
-
-                form_projeto_ged = GEDFormCarga(request.POST or None)
-                form_projeto_ld = LDFormCarga(request.POST or None, fornecedor_queryset=fornecedores_owner)
-
-                execucoes = ExecucaoLD.objects.filter(projeto=projeto).order_by('-data_execucao')
-                configura_ld_instance = ConfiguraLd.objects.get(projeto=projeto)
-                form_configura = ConfiguraLdForm(request.POST or None, instance=configura_ld_instance)
                 messages.error(request, "Não foi possível carregar o arquivo! verifique os logs de processamento!")
 
-                contexto = {'projeto': projeto, 'form_configura': form_configura, 'execucoes': execucoes,
-                            'form_projeto_ged': form_projeto_ged, 'form_projeto_ld': form_projeto_ld,
-                            'usuario': usuario,
-                            'profile': profile}
 
-                return render(request, 'projeto_detail.html', contexto)
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         else:
-            print(form_projeto_ged.errors)
 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 

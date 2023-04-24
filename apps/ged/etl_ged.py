@@ -36,12 +36,6 @@ def run_ged(arquivold_file, projeto_id, ged, request):
         if int(configuracoes["coluna"]) != 0:
             df_ged = df_ged.drop(columns=df_ged.columns[0:int(configuracoes["coluna"])])
 
-    ################################remove colunas em branco
-        df_ged = df_ged.rename(columns=df_ged.iloc[0])
-
-    ################################renomeia o nome das colunas
-        df_ged = df_ged.rename(columns=df_ged.iloc[0])
-        df_ged = df_ged.drop(df_ged.index[0])
 
     ################################validando colunas
         valida_colunadf(df_ged,ged,configuracoes)

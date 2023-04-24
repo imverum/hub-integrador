@@ -4,7 +4,7 @@ from apps.cronograma_master.models import ExecucaoCronoMaster, ConfiguraCronogra
 
 
 class CronogramaMasterFormCarga(forms.ModelForm):
-
+    arquivo = forms.FileField(required=True)
     class Meta:
         model = ExecucaoCronoMaster
         fields = ('arquivo',)

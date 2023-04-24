@@ -34,7 +34,16 @@
                                                 <td>{{projeto.projeto.descricao}}</td>
                                                 <td>{{projeto.projeto.inicio_projeto| date:"d/m/Y"}}</td>
                                                 <td>{{projeto.projeto.termino_projeto| date:"d/m/Y"}}</td>
+                                                {% if profile.role == 1 %}
+                                                 {% if projeto.ativo == False %}
+                                                <td><a class="btn btn-warning" href="{% url 'projeto_status' projeto.projeto.id%}">{{projeto.projeto.id| status_projeto}}</a></td>
+                                                {%else%}
+                                                <td><a class="btn btn-success" href="{% url 'projeto_status' projeto.projeto.id%}">{{projeto.projeto.id| status_projeto}}</a></td>
+                                                {%endif%}
+                                                {%else%}
                                                 <td>{{projeto.projeto.id| status_projeto}}</td>
+                                                {%endif%}
+
                                                 <td>
 
                                                      <button type="button" class="btn btn-primary" onclick="atividade({{projeto.projeto.id}})" > <span class="fa fa-edit"></span></button>

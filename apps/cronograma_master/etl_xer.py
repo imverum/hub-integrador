@@ -1,24 +1,35 @@
 from xerparser.reader import Reader
 import io
 from apps.cronograma_master.models import XerTask, XerCalendar, XerTaskPRED, XerActvcode, XerActvType, XerProject, \
-    XerProJWBS, XerRSRC, XerUDFType, XerUDFValue, ADFCronoMasterCronogramas
+    XerProJWBS, XerRSRC, XerUDFType, XerUDFValue, ADFCronoMasterCronogramas, XerTaskACTV
+from django.contrib import messages
+
+
 
 
 def run_etl_xer (arquivo_file, projeto, crono, request):
+    try:
+        xer_file = Reader(arquivo_file)
 
-    xer_file = Reader(arquivo_file)
-    print(xer_file)
-    carga_tabela_task(xer_file, projeto, crono)
-    carga_tabela_calendar(xer_file, projeto, crono)
-    carga_tabela_taskpred(xer_file, projeto, crono)
-    carga_tabela_actvcode(xer_file, projeto, crono)
-    carga_tabela_actvtype(xer_file, projeto, crono)
-    carga_tabela_project(xer_file, projeto, crono)
-    carga_tabela_projws(xer_file, projeto, crono)
-    carga_tabela_rsrc(xer_file, projeto, crono)
-    carga_tabela_udftypec(xer_file, projeto, crono)
-    carga_tabela_udfvalue(xer_file, projeto, crono)
-    carga_tabela_adf_crono(crono)
+        carga_tabela_task(xer_file, projeto, crono)
+        carga_tabela_taskactv(xer_file, projeto, crono)
+        carga_tabela_calendar(xer_file, projeto, crono)
+        carga_tabela_taskpred(xer_file, projeto, crono)
+        carga_tabela_actvcode(xer_file, projeto, crono)
+        carga_tabela_actvtype(xer_file, projeto, crono)
+        carga_tabela_project(xer_file, projeto, crono)
+        carga_tabela_projws(xer_file, projeto, crono)
+        carga_tabela_rsrc(xer_file, projeto, crono)
+        carga_tabela_udftypec(xer_file, projeto, crono)
+        carga_tabela_udfvalue(xer_file, projeto, crono)
+        carga_tabela_adf_crono(crono)
+
+    except:
+        messages.error(request, "Não foi possível carregar o arquivo!!")
+        crono.status = 'ERRO'
+        crono.save()
+
+
 
 def carga_tabela_task(xer_file, projeto, crono):
     projeto_tasks = xer_file.activities
@@ -73,6 +84,25 @@ def carga_tabela_task(xer_file, projeto, crono):
         create_date = atividade.create_date,
         update_date = atividade.update_date,
         )
+
+
+def carga_tabela_taskactv(xer_file, projeto, crono):
+    # Tabela TASKACTV
+    projeto_taskactv = xer_file.activitycodes
+
+    for recurso_atividade in projeto_taskactv:
+        carga_xer_taskactv = XerTaskACTV.objects.create(
+        projeto=projeto,
+        execucao=crono,
+
+        task_id = int(recurso_atividade.task_id),
+        actv_code_type_id = int(recurso_atividade.actv_code_type_id),
+        actv_code_id = int(recurso_atividade.actv_code_id),
+        proj_id = int(recurso_atividade.proj_id)),
+
+
+
+
 
 def carga_tabela_calendar(xer_file, projeto, crono):
     projeto_calendar = xer_file.calendars
@@ -135,23 +165,23 @@ def carga_tabela_actvtype(xer_file, projeto, crono):
         actv_code_type_scope = str(codigo.actv_code_type_scope),
         )
 
-def carga_tabela_project(xer_file, projeto_carga, crono):
+def carga_tabela_project(xer_file, projeto, crono):
     # Tabela PROJECT
     projeto_projects = xer_file.projects
-    for projeto in projeto_projects:
+    for projetoxer in projeto_projects:
         carga_xer_project = XerProject.objects.create(
-        projeto=projeto_carga,
+        projeto=projeto,
         execucao=crono,
-        proj_id = int(projeto.proj_id),
-        proj_short_name = str(projeto.proj_short_name),
-        def_complete_pct_type = str(projeto.def_complete_pct_type),
-        clndr_id = int(projeto.clndr_id),
-        task_code_base = int(projeto.task_code_base),
-        task_code_step = int(projeto.task_code_step),
-        last_recalc_date = projeto.last_recalc_date,
-        def_task_type = projeto.def_task_type,
-        critical_path_type = projeto.critical_path_type,
-        last_baseline_update_date = projeto.last_baseline_update_date,
+        proj_id = int(projetoxer.proj_id),
+        proj_short_name = str(projetoxer.proj_short_name),
+        def_complete_pct_type = str(projetoxer.def_complete_pct_type),
+        clndr_id = int(projetoxer.clndr_id),
+        task_code_base = int(projetoxer.task_code_base),
+        task_code_step = int(projetoxer.task_code_step),
+        last_recalc_date = projetoxer.last_recalc_date,
+        def_task_type = projetoxer.def_task_type,
+        critical_path_type = projetoxer.critical_path_type,
+        last_baseline_update_date = projetoxer.last_baseline_update_date,
         )
 
 def carga_tabela_projws(xer_file, projeto, crono):

@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block main %}
+{% include 'message.html' %}
 
    </head>
    <body class="inner_page profile_page">
@@ -51,8 +52,8 @@
                                            <div class="profile_contant">
                                              <div class="contact_inner">
                                                  <div class="row" style="display: inline-block">
-                                                     <h3>{{profile.nome}}</h3>
-                                                     {% if profile_perfil.user.id == user.id %}
+                                                     <h3>{{profile_perfil.nome}}</h3>
+                                                     {% if profile_perfil.user.id == usuario.id %}
                                                     <h1>   </h1>
                                                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i></button>
                                                     {% endif %}
@@ -60,7 +61,7 @@
 
                                                 <p><strong>Registro: </strong>{{profile_perfil.role|tipo_registro}}</p>
                                                 <ul class="list-unstyled">
-                                                   <li><i class="fa fa-envelope-o"></i> : {{usuario.email}}</li>
+                                                   <li><i class="fa fa-envelope-o"></i> : {{usuario_profile.email}}</li>
 
                                                 </ul>
                                              </div>
@@ -201,7 +202,7 @@
 </div>
 </form>
 
-<form name="form" id="formunidade" class="form-horizontal" method="post" action="{% url 'adicionar_unidade' usuario.id %}">
+<form name="form" id="formunidade" class="form-horizontal" method="post" action="{% url 'adicionar_unidade' usuario_profile.id %}">
 {% csrf_token %}
     <!-- Modal -->
 <div id="myModalUnidade" class="modal fade" role="dialog">
@@ -235,7 +236,7 @@
 </form>
 
 
-<form name="form" id="formprojeto" class="form-horizontal" method="post" action="{% url 'adicionar_projeto' usuario.id %}">
+<form name="form" id="formprojeto" class="form-horizontal" method="post" action="{% url 'adicionar_projeto' usuario_profile.id %}">
 {% csrf_token %}
     <!-- Modal -->
 <div id="myModalProjeto" class="modal fade" role="dialog">

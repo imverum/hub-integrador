@@ -26,7 +26,7 @@
                                         <tbody>
                                         {% for usuario in usuarios %}
                                             <tr>
-                                                <th>{{usuario.nome}}</th>
+                                                <th><a href="{% url 'profile_detail_visita'  usuario.id %}">{{usuario.nome}}</a></th>
                                                 <td>{{usuario.user.email}}</td>
                                                 <td>{{usuario.role| tipo_registro}}</td>
                                                 <td>{{usuario.user.id| status_usuario}}</td>

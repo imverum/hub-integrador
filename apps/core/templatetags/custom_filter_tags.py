@@ -65,12 +65,11 @@ def render_sim_nao(id):
 
 @register.filter
 def base_name(file_name):
-    if file_name == "media/RelatorioCBMM_P22113_MQbq15H.xlsx":
+    if "media/" in file_name:
         return "Arquivo não encontrado"
     try:
         caminho=str(file_name)
     except:
         caminho="Arquivo não encontrado"
 
-    print(caminho)
     return caminho

@@ -23,12 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
-#DEBUG = True
+#DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
-ALLOWED_HOSTS = ['hubintegrador.azurewebsites.net']
 
-CSRF_TRUSTED_ORIGINS = ['https://hubintegrador.azurewebsites.net/', 'https://*.hubintegrador.azurewebsites.net/', 'http://127.0.0.1:8000/']
+#ALLOWED_HOSTS = ['hubintegrador.azurewebsites.net', 'https://*.hubintegrador.azurewebsites.net/','http://127.0.0.1']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://hubintegrador.azurewebsites.net/', 'https://*.hubintegrador.azurewebsites.net/', 'http://127.0.0.1']
 
 
 # Application definition

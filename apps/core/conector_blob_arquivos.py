@@ -7,9 +7,7 @@ from decouple import config
 
 
 # obtenha a instância BlobServiceClient
-blob_service_client = BlobServiceClient.from_connection_string(config('blob_service_client'))
-
-
+blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=verumsys;AccountKey=zsjENq7RHecRcbSOGJrIjaXdV/z4kh0KtTsf/J/xy1FeANFcnXSnh6LDytspbpbF4Q5OwJOK4UnC+ASt4uembg==;EndpointSuffix=core.windows.net")
 
 def conector_blob(ld, arquivo_file):
     # gere um nome de blob exclusivo usando um UUID aleatório

@@ -6,6 +6,12 @@
 
 {% block main %}
 {% include 'message.html' %}
+<div id="loading" style="display:none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/carga.gif' %}" alt="Carregando...">
+</div>
+<div id="loading_fundo" style="display:none; position: fixed; z-index: 9998; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/fundo.png' %}" alt="Carregando...">
+</div>
 
 <nav arial-label="breadcrumb">
         <ol class="breadcrumb">
@@ -108,7 +114,7 @@
 
       </div>
       <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Carga</button>
+          <button type="submit" class="btn btn-primary" onclick="closemodalcargaged()">Carga</button>
       </div>
     </div>
 
@@ -140,7 +146,7 @@
 
       </div>
       <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Carga</button>
+          <button type="submit" class="btn btn-primary" onclick="closemodalcarga()">Carga</button>
       </div>
     </div>
 
@@ -247,6 +253,29 @@
       document.getElementById("id_delet").value = id;
       console.log(id)
     };
+
+    function closemodalcarga() {
+    const fileInput = document.querySelector('#id_arquivo_ld');
+    if (fileInput.files.length > 0) {
+      $('#myModalLD').modal('hide');
+      $('#loading').show();
+
+      console.log(fileInput.files.length);
+    } else {
+      console.log(fileInput.files.length);
+    }
+  };
+   function closemodalcargaged() {
+    const fileInput = document.querySelector('#id_arquivo_ged');
+    if (fileInput.files.length > 0) {
+      $('#myModalGED').modal('hide');
+      $('#loading').show();
+
+      console.log(fileInput.files.length);
+    } else {
+      console.log(fileInput.files.length);
+    }
+  };
 
 </script>
 {% endblock  %}

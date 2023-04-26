@@ -10,6 +10,10 @@ class PacotesFormCarga(forms.ModelForm):
         label='Data Corte',
         widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}))
 
+    arquivo = forms.FileField(
+        required=True,
+        widget=forms.ClearableFileInput(attrs={'id': 'id_arquivo_pacotes'}))
+
     class Meta:
         model = ExecucaoMasterIndex
         fields = ('arquivo', 'data_corte')
@@ -19,6 +23,10 @@ class CWAFormCarga(forms.ModelForm):
     data_corte = forms.DateField(
         label='Data Corte',
         widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}))
+
+    arquivo = forms.FileField(
+        required=True,
+        widget=forms.ClearableFileInput(attrs={'id': 'id_arquivo_cwa'}))
 
     class Meta:
         model = ExecucaoMasterIndex

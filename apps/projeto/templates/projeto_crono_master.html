@@ -9,7 +9,9 @@
 <div id="loading" style="display:none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%);">
     <img src="{% static '/images/carga.gif' %}" alt="Carregando...">
 </div>
-
+<div id="loading_fundo" style="display:none; position: fixed; z-index: 9998; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/fundo.png' %}" alt="Carregando...">
+</div>
 <nav arial-label="breadcrumb">
         <ol class="breadcrumb">
             {%if projeto.cronograma_master == True %}
@@ -86,36 +88,35 @@
 <form name="form" id="formcurva"  method="post" action="{% url 'execucao_cronograma_master' %}" enctype="multipart/form-data">
 {% csrf_token %}
     <!-- Modal -->
-<div class="modal fade show" id="myModalCurva" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+   <div class="modal fade show" id="myModalCurva" class="modal fade" role="dialog">
+       <div class="modal-dialog">
 
-    <!-- Modal content-->
-    <div class="modal-content" >
-      <div class="modal-header">
-          <h3 class="modal-title">Carga Curva</h3>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body" >
-          <div class="form-group">
-              <div class="col-sm-12">
-                  <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+                    <!-- Modal content-->
+          <div class="modal-content" >
+               <div class="modal-header">
+                   <h3 class="modal-title">Carga Curva</h3>
+                   <button type="button" class="close" data-dismiss="modal">&times;</button>
+               </div>
+                 <div class="modal-body" >
+                          <div class="form-group">
+                              <div class="col-sm-12">
+                                  <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
 
-                {{ form_projeto_crono_master.as_p }}
-
-              </div>
+                                {{ form_projeto_crono_master.as_p }}
+                              </div>
+                          </div>
+                 </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" onclick="closemodalcargacurva()" >Carga</button>
+                    </div>
           </div>
-
-      </div>
-      <div class="modal-footer">
-          <button type="submit" class="btn btn-primary" >Carga</button>
-      </div>
-    </div>
-
-  </div>
-</div>
+        </div>
+   </div>
 </form>
 
-<form name="form" id="formcronograma"  method="post" action="{% url 'execucao_cronograma_master_crono' %}" enctype="multipart/form-data">
+
+
+<form name="formmodal" id="formcronograma"  method="post" action="{% url 'execucao_cronograma_master_crono' %}" enctype="multipart/form-data">
 {% csrf_token %}
     <!-- Modal -->
 <div class="modal fade show" id="myModalCronograma" class="modal fade" role="dialog">
@@ -143,7 +144,6 @@
           <button type="submit" class="btn btn-primary"  onclick="closemodalcarga()">Carga</button>
       </div>
     </div>
-
   </div>
 </div>
 </form>
@@ -223,13 +223,24 @@ function closemodalcarga() {
     if (fileInput.files.length > 0) {
       $('#myModalCronograma').modal('hide');
       $('#loading').show();
+
       console.log(fileInput.files.length);
     } else {
       console.log(fileInput.files.length);
     }
   };
 
+function closemodalcargacurva() {
+    const fileInput = document.querySelector('#id_arquivo_curva');
+    if (fileInput.files.length > 0) {
+      $('#myModalCurva').modal('hide');
+      $('#loading').show();
 
+      console.log(fileInput.files.length);
+    } else {
+      console.log(fileInput.files.length);
+    }
+  };
 
 </script>
 {% endblock  %}

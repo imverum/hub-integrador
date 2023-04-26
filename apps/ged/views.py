@@ -125,7 +125,7 @@ def execucao_ld(request):
     profile = Profile.objects.get(user=usuario)
     fornecedores_owner = Fornecedores.objects.filter(owner=profile.owner)
     if request.method == 'POST':
-        form_projeto_ld = LDFormCarga(request.POST or None, fornecedor_queryset=fornecedores_owner)
+        form_projeto_ld = LDFormCarga(request.POST,  request.FILES, fornecedor_queryset=fornecedores_owner)
 
         if form_projeto_ld.is_valid():
             ld = form_projeto_ld.save(commit=False)
@@ -133,6 +133,7 @@ def execucao_ld(request):
             ld.unidade = projeto.unidade
             ld.owner = projeto.unidade.owner
             ld.profile = profile
+            ld.arquivold = None
 
             ld.tipo = 'LD'
             ld.save()
@@ -243,7 +244,7 @@ def execucao_ged(request):
     profile = Profile.objects.get(user=usuario)
 
     if request.method == 'POST':
-        form_projeto_ged = GEDFormCarga(request.POST or None)
+        form_projeto_ged = GEDFormCarga(request.POST, request.FILES)
 
         if form_projeto_ged.is_valid():
             ged = form_projeto_ged.save(commit=False)
@@ -251,6 +252,7 @@ def execucao_ged(request):
             ged.unidade = projeto.unidade
             ged.owner = projeto.unidade.owner
             ged.profile = profile
+            ged.arquivold = None
 
             ged.tipo = 'GED'
             ged.save()
@@ -264,9 +266,10 @@ def execucao_ged(request):
                 ged.status = 'Finalizado'
                 ged.save()
             if not arquivo_file.name.endswith('xlsx'):
-                run_ged(arquivo_file, projeto_id, ged, request)
                 messages.error(request, "Só é aceito arquivo com extensão xlsx!")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+            run_ged(arquivo_file, projeto_id, ged, request)
             if ged.status == 'ERRO':
 
                 messages.error(request, "Não foi possível carregar o arquivo! verifique os logs de processamento!")

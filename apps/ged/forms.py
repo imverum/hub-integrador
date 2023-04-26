@@ -8,7 +8,9 @@ class GEDFormCarga(forms.ModelForm):
     data_corte = forms.DateField(
         label='Data Corte',
         widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}))
-
+    arquivold = forms.FileField(
+        required=True,
+        widget=forms.ClearableFileInput(attrs={'id': 'id_arquivo_ged'}))
     class Meta:
         model = ExecucaoLD
         fields = ('arquivold', 'data_corte')
@@ -38,6 +40,9 @@ class LDFormCarga(forms.ModelForm):
 
     fornecedor = forms.ModelChoiceField(queryset=Fornecedores.objects.none())
     fornecedor.widget.attrs.update({'class': 'form-control'})
+    arquivold = forms.FileField(
+        required=True,
+        widget=forms.ClearableFileInput(attrs={'id': 'id_arquivo_ld'}))
 
 
     class Meta:

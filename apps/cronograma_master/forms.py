@@ -4,7 +4,10 @@ from apps.cronograma_master.models import ExecucaoCronoMaster, ConfiguraCronogra
 
 
 class CronogramaMasterFormCarga(forms.ModelForm):
-    arquivo = forms.FileField(required=True)
+    arquivo = forms.FileField(
+        required=True,
+        widget=forms.ClearableFileInput(attrs={'id': 'id_arquivo_curva'}))
+
     class Meta:
         model = ExecucaoCronoMaster
         fields = ('arquivo',)

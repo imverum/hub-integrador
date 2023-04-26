@@ -31,7 +31,7 @@ def execucao_cronograma_master(request):
     profile = Profile.objects.get(user=usuario)
 
     if request.method == 'POST':
-        form_projeto_crono_master = CronogramaMasterFormCarga(request.POST or None)
+        form_projeto_crono_master = CronogramaMasterFormCarga(request.POST, request.FILES)
 
         if form_projeto_crono_master.is_valid():
             crono = form_projeto_crono_master.save(commit=False)
@@ -39,6 +39,7 @@ def execucao_cronograma_master(request):
             crono.unidade = projeto.unidade
             crono.owner = projeto.unidade.owner
             crono.profile = profile
+            crono.arquivo = None
             crono.save()
 
             crono.tipo = 'CURVA'

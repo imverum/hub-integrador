@@ -22,7 +22,7 @@ def execucao_master_index_pacotes(request):
     profile = Profile.objects.get(user=usuario)
 
     if request.method == 'POST':
-        form_projeto_pacotes = PacotesFormCarga(request.POST or None)
+        form_projeto_pacotes = PacotesFormCarga(request.POST, request.FILES)
 
         if form_projeto_pacotes.is_valid():
             pacotes = form_projeto_pacotes.save(commit=False)
@@ -30,6 +30,7 @@ def execucao_master_index_pacotes(request):
             pacotes.unidade = projeto.unidade
             pacotes.owner = projeto.unidade.owner
             pacotes.profile = profile
+            pacotes.arquivo = None
 
             pacotes.tipo = 'Pacotes'
             pacotes.save()
@@ -93,7 +94,7 @@ def execucao_master_index_cwa(request):
     profile = Profile.objects.get(user=usuario)
 
     if request.method == 'POST':
-        form_projeto_cwa = CWAFormCarga(request.POST or None)
+        form_projeto_cwa = CWAFormCarga(request.POST, request.FILES)
 
         if form_projeto_cwa.is_valid():
             cwa = form_projeto_cwa.save(commit=False)
@@ -101,6 +102,7 @@ def execucao_master_index_cwa(request):
             cwa.unidade = projeto.unidade
             cwa.owner = projeto.unidade.owner
             cwa.profile = profile
+            cwa.arquivo = None
 
             cwa.tipo = 'CWA'
             cwa.save()

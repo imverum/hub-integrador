@@ -1,7 +1,8 @@
 from xerparser.reader import Reader
 import io
 from apps.cronograma_master.models import XerTask, XerCalendar, XerTaskPRED, XerActvcode, XerActvType, XerProject, \
-    XerProJWBS, XerRSRC, XerUDFType, XerUDFValue, ADFCronoMasterCronogramas, XerTaskACTV
+    XerProJWBS, XerRSRC, XerUDFType, XerUDFValue, ADFCronoMasterCronogramas, XerTaskACTV, \
+    LogProcessamentoCronogramaMaster
 from django.contrib import messages
 
 
@@ -25,6 +26,13 @@ def run_etl_xer (arquivo_file, projeto, crono, request):
         carga_tabela_adf_crono(crono)
 
     except:
+        log = LogProcessamentoCronogramaMaster.objects.create(
+            projeto=crono.projeto,
+            tipo="CRONO_MASTER_PROCESSAMENTO_XER",
+            log="O Sistema não consegue abrir o arquivo XER para essa versão!",
+            execucao=crono,
+
+        )
         messages.error(request, "Não foi possível carregar o arquivo!!")
         crono.status = 'ERRO'
         crono.save()

@@ -51,6 +51,7 @@ def execucao_cronograma_master(request):
                 crono.arquivo = blob_name
 
                 crono.status = 'Finalizado'
+
                 crono.save()
 
             run_crono_master(arquivo_file, projeto_id, crono, request)

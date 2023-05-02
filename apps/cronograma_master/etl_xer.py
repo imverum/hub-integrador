@@ -6,42 +6,32 @@ from apps.cronograma_master.models import XerTask, XerCalendar, XerTaskPRED, Xer
 from django.contrib import messages
 
 
-
+import concurrent.futures
 
 def run_etl_xer (arquivo_file, projeto, crono, request):
-    try:
-        xer_file = Reader(arquivo_file)
 
-        carga_tabela_task(xer_file, projeto, crono)
-        carga_tabela_taskactv(xer_file, projeto, crono)
-        carga_tabela_calendar(xer_file, projeto, crono)
-        carga_tabela_taskpred(xer_file, projeto, crono)
-        carga_tabela_actvcode(xer_file, projeto, crono)
-        carga_tabela_actvtype(xer_file, projeto, crono)
-        carga_tabela_project(xer_file, projeto, crono)
-        carga_tabela_projws(xer_file, projeto, crono)
-        carga_tabela_rsrc(xer_file, projeto, crono)
-        carga_tabela_udftypec(xer_file, projeto, crono)
-        carga_tabela_udfvalue(xer_file, projeto, crono)
-        carga_tabela_adf_crono(crono)
+    xer_file = Reader(arquivo_file)
 
-    except:
-        log = LogProcessamentoCronogramaMaster.objects.create(
-            projeto=crono.projeto,
-            tipo="CRONO_MASTER_PROCESSAMENTO_XER",
-            log="O Sistema não consegue abrir o arquivo XER para essa versão!",
-            execucao=crono,
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        executor.submit(carga_tabela_task, xer_file, projeto, crono)
+        executor.submit(carga_tabela_taskactv, xer_file, projeto, crono)
+        executor.submit(carga_tabela_calendar, xer_file, projeto, crono)
+        executor.submit(carga_tabela_taskpred, xer_file, projeto, crono)
+        executor.submit(carga_tabela_actvcode, xer_file, projeto, crono)
+        executor.submit(carga_tabela_actvtype, xer_file, projeto, crono)
+        executor.submit(carga_tabela_project, xer_file, projeto, crono)
+        executor.submit(carga_tabela_projws, xer_file, projeto, crono)
+        executor.submit(carga_tabela_rsrc, xer_file, projeto, crono)
+        executor.submit(carga_tabela_udftypec, xer_file, projeto, crono)
+        executor.submit(carga_tabela_udfvalue, xer_file, projeto, crono)
+        executor.submit(carga_tabela_adf_crono, crono)
 
-        )
-        messages.error(request, "Não foi possível carregar o arquivo!!")
-        crono.status = 'ERRO'
-        crono.save()
+
 
 
 
 def carga_tabela_task(xer_file, projeto, crono):
     projeto_tasks = xer_file.activities
-    print(projeto_tasks)
     for atividade in projeto_tasks:
         carga_xer_task = XerTask.objects.create(
         projeto = projeto,
@@ -262,5 +252,6 @@ def carga_tabela_udfvalue(xer_file, projeto, crono):
 def carga_tabela_adf_crono(crono):
     carga_xer_adf_crono = ADFCronoMasterCronogramas.objects.create(
         execucao=crono,
+        status_execucao_adf="Pendente",
         arquivo = "xer",
         )

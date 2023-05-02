@@ -140,6 +140,8 @@ def run_crono_master (arquivold_file, projeto_id, crono, request):
                 )
             carga_adf_crono_master = ADFCronoMaster.objects.create(
                 execucao=crono,
+                status_execucao_adf="Pendente",
+                arquivo="Curva"
             )
 
 

@@ -378,6 +378,7 @@ class ADFCronoMasterCronogramas(models.Model):
     execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.PROTECT, blank=True, null=True)
     arquivo = models.CharField(max_length=300, blank=True, null=True)
     status_execucao_adf = models.CharField(max_length=200, blank=True, null=True, default='Concluído')
+    projeto = models.ForeignKey(Projeto, on_delete=models.PROTECT, blank=True, null=True)
 
     class Meta:
         db_table = 'execucao_cronograma_master_cronogramas_adf'

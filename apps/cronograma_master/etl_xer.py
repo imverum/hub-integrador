@@ -254,4 +254,5 @@ def carga_tabela_adf_crono(crono):
         execucao=crono,
         status_execucao_adf="Pendente",
         arquivo = "xer",
+        projeto=crono.projeto
         )

@@ -1,6 +1,6 @@
 from apps.core.tratar_datas import tratar_data, validar_data
 from apps.cronograma_master.models import ConfiguraCronogramaMaster, LogProcessamentoCronogramaMaster, \
-    StageCronogramaMaster, ADFCronoMaster
+    StageCronogramaMaster, ADFCronoMaster, ADFCronoMasterCronogramas
 from apps.projeto.models import Projeto
 import pandas as pd
 from datetime import datetime
@@ -138,10 +138,11 @@ def run_crono_master (arquivold_file, projeto_id, crono, request):
                     valor=valor,
                     unidade=unidade,
                 )
-            carga_adf_crono_master = ADFCronoMaster.objects.create(
+            carga_adf_crono_master = ADFCronoMasterCronogramas.objects.create(
                 execucao=crono,
                 status_execucao_adf="Pendente",
-                arquivo="Curva"
+                arquivo="Curva",
+                projeto=crono.projeto
             )
 
 

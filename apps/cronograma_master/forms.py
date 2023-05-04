@@ -3,6 +3,16 @@ from django import forms
 from apps.cronograma_master.models import ExecucaoCronoMaster, ConfiguraCronogramaMaster
 
 
+class CronogramaMasterBaselineFormCarga(forms.ModelForm):
+    arquivo = forms.FileField(
+        required=True,
+        widget=forms.ClearableFileInput(attrs={'id': 'id_arquivo_baseline'}))
+
+    class Meta:
+        model = ExecucaoCronoMaster
+        fields = ('arquivo',)
+
+
 class CronogramaMasterFormCarga(forms.ModelForm):
     arquivo = forms.FileField(
         required=True,

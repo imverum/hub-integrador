@@ -386,3 +386,20 @@ class ADFCronoMasterCronogramas(models.Model):
         verbose_name = 'BD Execucao Cronograma Master Cronogramas ADF'
 
 
+
+
+class StageCronogramaMasterBaseline(models.Model):
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.PROTECT, blank=True, null=True)
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
+
+    codigo = models.CharField(max_length= 200, blank=True, null=True)
+    descricao_atividade = models.CharField(max_length= 200, blank=True, null=True)
+    inicio = models.CharField(max_length= 200, blank=True, null=True)
+    termino = models.CharField(max_length= 200, blank=True, null=True)
+    duracao = models.CharField(max_length= 200, blank=True, null=True)
+
+
+    class Meta:
+        db_table = 'cronograma_master_stage_baseline'
+        verbose_name_plural = 'BD Stage Cronograma Master Baseline'
+        verbose_name = 'BD Stage Cronograma Master Baseline'

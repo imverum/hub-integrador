@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from apps.core.models import Unidade
 from apps.cronograma_master.forms import CronogramaMasterFormCarga, ConfiguraCronogramaMasterForm, \
-    CronogramaMasterFormCargaXer
+    CronogramaMasterFormCargaXer, CronogramaMasterBaselineFormCarga
 from apps.cronograma_master.models import ConfiguraCronogramaMaster, ExecucaoCronoMaster
 from apps.fornecedores.models import Fornecedores
 from apps.ged.forms import LDFormCarga, ConfiguraLdForm, ConfiguraGEDForm, GEDFormCarga
@@ -261,7 +261,7 @@ def projeto_crono_master(request, id):
 
     form_projeto_crono_master = CronogramaMasterFormCarga(request.POST or None)
 
-
+    form_projeto_crono_master_baseline = CronogramaMasterBaselineFormCarga(request.POST or None)
 
     configura_crono_master_instance = ConfiguraCronogramaMaster.objects.get(projeto=projeto)
     form_configura = ConfiguraCronogramaMasterForm(request.POST or None, instance=configura_crono_master_instance)
@@ -278,7 +278,7 @@ def projeto_crono_master(request, id):
     except EmptyPage:
         execucoes_page = paginator.page(paginator.num_pages)
 
-    contexto = {'projeto':projeto, 'form_configura':form_configura, 'execucoes_page':execucoes_page, 'page_obj':page_obj,'usuario':usuario, 'profile':profile, 'form_projeto_crono_master':form_projeto_crono_master}
+    contexto = {'form_projeto_crono_master_baseline':form_projeto_crono_master_baseline,'projeto':projeto, 'form_configura':form_configura, 'execucoes_page':execucoes_page, 'page_obj':page_obj,'usuario':usuario, 'profile':profile, 'form_projeto_crono_master':form_projeto_crono_master}
 
 
     return render(request, 'projeto_crono_master.html', contexto)

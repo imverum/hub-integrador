@@ -12,10 +12,11 @@ import tempfile
 
 from apps.core.acesso_logs import criar_planilha_log_geral
 from apps.core.conector_blob_arquivos import conector_blob, arquiv_xer_storage
+from apps.cronograma_master.etl_baseline import run_crono_master_baseline
 from apps.cronograma_master.etl_cronograma_master import run_crono_master
 from apps.cronograma_master.etl_xer import run_etl_xer
 from apps.cronograma_master.forms import CronogramaMasterFormCarga, ConfiguraCronogramaMasterForm, \
-    CronogramaMasterFormCargaXer
+    CronogramaMasterFormCargaXer, CronogramaMasterBaselineFormCarga
 from apps.cronograma_master.models import ConfiguraCronogramaMaster, ExecucaoCronoMaster, \
     LogProcessamentoCronogramaMaster
 from apps.projeto.models import Projeto
@@ -174,3 +175,71 @@ def exportar_log_crono_master(request, id):
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
         return response
+
+@csrf_exempt
+@login_required
+def execucao_cronograma_master_baseline(request):
+    projeto_id = request.POST.get("projeto_id")
+    projeto = Projeto.objects.get(id=projeto_id)
+    usuario = request.user
+    profile = Profile.objects.get(user=usuario)
+
+    if request.method == 'POST':
+        form_projeto_crono_master_baseline = CronogramaMasterBaselineFormCarga(request.POST, request.FILES)
+
+        if form_projeto_crono_master_baseline.is_valid():
+            crono = form_projeto_crono_master_baseline.save(commit=False)
+            crono.projeto = projeto
+            crono.unidade = projeto.unidade
+            crono.owner = projeto.unidade.owner
+            crono.profile = profile
+            crono.arquivo = None
+            crono.save()
+
+            crono.tipo = 'BASELINE'
+            crono.save()
+
+            arquivo_file = request.FILES.get('arquivo')
+            if arquivo_file != None:
+                blob_name = conector_blob(ld=crono, arquivo_file=arquivo_file)  # função para salvar o arquivo na storage
+                crono.arquivo = blob_name
+
+                crono.status = 'Finalizado'
+
+                crono.save()
+
+            run_crono_master_baseline(arquivo_file, projeto_id, crono, request)
+            if crono.status == 'ERRO':
+
+
+                form_projeto_crono_master = CronogramaMasterFormCarga(request.POST or None)
+
+                configura_crono_master_instance = ConfiguraCronogramaMaster.objects.get(projeto=projeto)
+                form_configura = ConfiguraCronogramaMasterForm(request.POST or None,
+                                                               instance=configura_crono_master_instance)
+
+                execucoes = ExecucaoCronoMaster.objects.filter(projeto=projeto).order_by('-data_execucao')
+                paginator = Paginator(execucoes, 10)
+                page = request.GET.get("page")
+                page_obj = paginator.get_page(page)
+                try:
+                    execucoes_page = paginator.page(page)
+                except PageNotAnInteger:
+                    execucoes_page = paginator.page(1)
+                except EmptyPage:
+                    execucoes_page = paginator.page(paginator.num_pages)
+
+                contexto = {'projeto': projeto, 'form_configura': form_configura, 'execucoes_page': execucoes_page,
+                            'page_obj': page_obj, 'usuario': usuario, 'profile': profile,
+                            'form_projeto_crono_master': form_projeto_crono_master}
+
+                return render(request, 'projeto_crono_master.html', contexto)
+
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        else:
+            print(form_projeto_crono_master_baseline.errors)
+
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

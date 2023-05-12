@@ -65,14 +65,16 @@ def run_crono_master (arquivold_file, projeto_id, crono, request):
 
 
             df_crono = df_crono.dropna(subset=['Valor'])
+            try:
+                valor_unidade = df_crono['Valor'].str.extract('(\d+)\s*([a-zA-Z]+)')
 
-            valor_unidade = df_crono['Valor'].str.extract('(\d+)\s*([a-zA-Z]+)')
+                df_crono['Valor'] = valor_unidade[0]
 
-            df_crono['Valor'] = valor_unidade[0]
+                df_crono['Valor'] = pd.to_numeric(df_crono['Valor'])
 
-            df_crono['Valor'] = pd.to_numeric(df_crono['Valor'])
-
-            df_crono['Unidade'] = valor_unidade[1]
+                df_crono['Unidade'] = valor_unidade[1]
+            except:
+                pass
 
             df_crono['Data'] = df_crono['Data'].str.replace('-', '/')
 
@@ -122,10 +124,12 @@ def run_crono_master (arquivold_file, projeto_id, crono, request):
 
                 try:
                     unidade = df_crono["Unidade"].iloc[dado]
+                    print(unidade)
                     if pd.isna(unidade):
                         unidade = None
+                        print(unidade)
                 except:
-                    pass
+                    unidade = None
 
                 carga_stage = StageCronogramaMaster.objects.create(
                     execucao=crono,

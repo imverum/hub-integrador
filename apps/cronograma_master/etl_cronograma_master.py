@@ -5,7 +5,7 @@ from apps.projeto.models import Projeto
 import pandas as pd
 from datetime import datetime
 
-def run_crono_master (arquivold_file, projeto_id, crono, request):
+def run_crono_master (arquivold_file, projeto_id, crono, request, container):
     projeto = Projeto.objects.get(id=projeto_id)
     configuracoes = ConfiguraCronogramaMaster.objects.filter(projeto=projeto).values().first()
 
@@ -19,6 +19,7 @@ def run_crono_master (arquivold_file, projeto_id, crono, request):
 
         )
         crono.status = 'ERRO'
+        crono.termino_preprocessament = datetime.now().time()
         crono.save()
 
     if crono.status != "ERRO":
@@ -34,7 +35,11 @@ def run_crono_master (arquivold_file, projeto_id, crono, request):
 
         ################################validando colunas
         valida_colunadf(df_crono, crono, request, configuracoes)
+        crono.termino_preprocessament = datetime.now().time()
+        crono.save()
         if crono.status != "ERRO":
+            crono.inicio_carga = datetime.now().time()
+            crono.save()
 
             colunas_obrigatorias = [configuracoes["activity_id"], configuracoes["resource_name"], configuracoes["resource_type"], configuracoes["spreadsheet_field"]]
 
@@ -65,6 +70,10 @@ def run_crono_master (arquivold_file, projeto_id, crono, request):
 
 
             df_crono = df_crono.dropna(subset=['Valor'])
+
+
+
+
             try:
                 valor_unidade = df_crono['Valor'].str.extract('(\d+)\s*([a-zA-Z]+)')
 
@@ -77,78 +86,129 @@ def run_crono_master (arquivold_file, projeto_id, crono, request):
                 pass
 
             df_crono['Data'] = df_crono['Data'].str.replace('-', '/')
+            print("Data")
+            df_crono['Data'] = df_crono['Data'].apply(tratar_data)
+            print(df_crono['Data'])
 
-            for dado in range(len(df_crono)):
-                try:
-                    activity_id = df_crono[configuracoes["activity_id"]].iloc[dado]
-                    if pd.isna(activity_id):
-                        activity_id = None
-                except:
-                   pass
-                try:
-                    resource_name = df_crono[configuracoes["resource_name"]].iloc[dado]
-                    if pd.isna(resource_name):
-                        resource_name = None
-                except:
-                   pass
 
-                try:
-                    resource_type = df_crono[configuracoes["resource_type"]].iloc[dado]
-                    if pd.isna(resource_type):
-                        resource_type = None
-                except:
-                    pass
+            print("activity_id")
+            df_crono[configuracoes["activity_id"]] = df_crono[configuracoes["activity_id"]].apply(
+                lambda resource_type: None if pd.isna(resource_type) else resource_type)
 
-                try:
-                    spreadsheet_field = df_crono[configuracoes["spreadsheet_field"]].iloc[dado]
-                    if pd.isna(spreadsheet_field):
-                        spreadsheet_field = None
-                except:
-                    pass
-                try:
-                    data = df_crono["Data"].iloc[dado]
-                    print(data)
-                    data = tratar_data(df_crono["Data"].iloc[dado])
-                    print(data)
-                    if pd.isna(data):
-                        data = None
-                except:
-                    pass
+            df_crono[configuracoes["resource_name"]] = df_crono[configuracoes["resource_name"]].apply(
+                lambda resource_name: None if pd.isna(resource_name) else resource_name)
 
-                try:
-                    valor = df_crono["Valor"].iloc[dado]
-                    if pd.isna(valor):
-                        valor = None
-                except:
-                    pass
+            df_crono[configuracoes["resource_type"]] = df_crono[configuracoes["resource_type"]].apply(
+                lambda resource_type: None if pd.isna(resource_type) else resource_type)
 
-                try:
-                    unidade = df_crono["Unidade"].iloc[dado]
-                    print(unidade)
-                    if pd.isna(unidade):
-                        unidade = None
-                        print(unidade)
-                except:
-                    unidade = None
+            df_crono[configuracoes["spreadsheet_field"]] = df_crono[configuracoes["spreadsheet_field"]].apply(
+                lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
 
-                carga_stage = StageCronogramaMaster.objects.create(
-                    execucao=crono,
-                    projeto=crono.projeto,
-                    activity_id=activity_id,
-                    resource_name=resource_name,
-                    resource_type=resource_type,
-                    spreadsheet_field=spreadsheet_field,
-                    data= data, #datetime.strptime(str(data), "%Y-%m-%d %H:%M:%S")
-                    valor=valor,
-                    unidade=unidade,
-                )
-            carga_adf_crono_master = ADFCronoMasterCronogramas.objects.create(
-                execucao=crono,
-                status_execucao_adf="Pendente",
-                arquivo="Curva",
-                projeto=crono.projeto
-            )
+            df_crono["Valor"] = df_crono["Valor"].apply(
+                lambda Valor: None if pd.isna(Valor) else Valor)
 
+            df_crono["Unidade"] = df_crono["Unidade"].apply(
+                lambda Unidade: None if pd.isna(Unidade) else Unidade)
+
+            df_crono["Valor"] = df_crono["Valor"].fillna(0)
+            df_crono["Unidade"] = df_crono["Unidade"].fillna("NA")
+
+            df_crono = df_crono.rename(columns={'Activity ID': 'activity_id'})
+            df_crono = df_crono.rename(columns={'Resource Name': 'resource_name'})
+            df_crono = df_crono.rename(columns={'Resource Type': 'resource_type'})
+            df_crono = df_crono.rename(columns={'Spreadsheet Field': 'spreadsheet_field'})
+            df_crono = df_crono.rename(columns={'Data': 'data'})
+            df_crono = df_crono.rename(columns={'Valor': 'valor'})
+            df_crono = df_crono.rename(columns={'Unidade': 'unidade'})
+
+            df_crono["execucao_id"]=crono.id
+            df_crono["projeto_id"]=crono.projeto.id
+            df_crono["container_id"]=container
+            print("AQUI")
+            print(df_crono)
+            #df_crono.to_excel('arquivo.xlsx', index=False)
+            # Converter o DataFrame em uma lista de instâncias do modelo
+            instancias = [StageCronogramaMaster(**dados) for dados in df_crono.to_dict('records')]
+            print("instancias")
+            # Inserir as instâncias no banco de dados
+            StageCronogramaMaster.objects.bulk_create(instancias)
+            print("StageCronogramaMaster")
+            crono.termino_carga = datetime.now().time()
+            crono.save()
+
+
+            #for dado in range(len(df_crono)):
+            #    try:
+            #        activity_id = df_crono[configuracoes["activity_id"]].iloc[dado]
+            #        if pd.isna(activity_id):
+            #            activity_id = None
+            #    except:
+            #       pass
+            #    try:
+            #        resource_name = df_crono[configuracoes["resource_name"]].iloc[dado]
+            #        if pd.isna(resource_name):
+            #            resource_name = None
+            #    except:
+            #       pass
+
+            #    try:
+            #        resource_type = df_crono[configuracoes["resource_type"]].iloc[dado]
+            #        if pd.isna(resource_type):
+            #            resource_type = None
+            #    except:
+            #        pass
+
+            #    try:
+            #        spreadsheet_field = df_crono[configuracoes["spreadsheet_field"]].iloc[dado]
+            #        if pd.isna(spreadsheet_field):
+            #            spreadsheet_field = None
+            #    except:
+            #        pass
+            #    try:
+            #        data = df_crono["Data"].iloc[dado]
+            #        print(data)
+            #        data = tratar_data(df_crono["Data"].iloc[dado])
+            #        print(data)
+            #        if pd.isna(data):
+            #            data = None
+            #    except:
+            #        pass
+
+            #    try:
+            #        valor = df_crono["Valor"].iloc[dado]
+            #        if pd.isna(valor):
+            #            valor = None
+            #    except:
+            #        pass
+
+            #    try:
+            #        unidade = df_crono["Unidade"].iloc[dado]
+            #        print(unidade)
+            #        if pd.isna(unidade):
+            #            unidade = None
+            #            print(unidade)
+            #    except:
+            #        unidade = None
+
+            #    carga_stage = StageCronogramaMaster.objects.create(
+            #        execucao=crono,
+            #        projeto=crono.projeto,
+            #        activity_id=activity_id,
+            #        resource_name=resource_name,
+            #        resource_type=resource_type,
+            #        spreadsheet_field=spreadsheet_field,
+            #        data= data, #datetime.strptime(str(data), "%Y-%m-%d %H:%M:%S")
+            #        valor=valor,
+            #        unidade=unidade,
+            #    )
+            #carga_adf_crono_master = ADFCronoMasterCronogramas.objects.create(
+            #    execucao=crono,
+            #    status_execucao_adf="Pendente",
+            #    arquivo="Curva",
+            #    projeto=crono.projeto
+            #)
+            #crono.termino_carga = datetime.now().time()
+            #crono.save()
 
 def valida_colunadf(df_crono, crono, request, configuracoes):
     colunas_errors = []

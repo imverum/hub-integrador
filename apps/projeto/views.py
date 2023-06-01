@@ -248,42 +248,6 @@ def projeto_ged(request, id):
     return render(request, 'projeto_ged.html', contexto)
 
 
-
-
-
-@csrf_exempt
-@login_required
-def projeto_crono_master(request, id):
-    projeto = Projeto.objects.get(id=id)
-    usuario = request.user
-    profile = Profile.objects.get(user=usuario)
-
-
-    form_projeto_crono_master = CronogramaMasterFormCarga(request.POST or None)
-
-    form_projeto_crono_master_baseline = CronogramaMasterBaselineFormCarga(request.POST or None)
-
-    configura_crono_master_instance = ConfiguraCronogramaMaster.objects.get(projeto=projeto)
-    form_configura = ConfiguraCronogramaMasterForm(request.POST or None, instance=configura_crono_master_instance)
-
-
-    execucoes = ExecucaoCronoMaster.objects.filter(projeto=projeto).order_by('-data_execucao')
-    paginator = Paginator(execucoes, 10)
-    page = request.GET.get("page")
-    page_obj = paginator.get_page(page)
-    try:
-        execucoes_page = paginator.page(page)
-    except PageNotAnInteger:
-        execucoes_page = paginator.page(1)
-    except EmptyPage:
-        execucoes_page = paginator.page(paginator.num_pages)
-
-    contexto = {'form_projeto_crono_master_baseline':form_projeto_crono_master_baseline,'projeto':projeto, 'form_configura':form_configura, 'execucoes_page':execucoes_page, 'page_obj':page_obj,'usuario':usuario, 'profile':profile, 'form_projeto_crono_master':form_projeto_crono_master}
-
-
-    return render(request, 'projeto_crono_master.html', contexto)
-
-
 @csrf_exempt
 @login_required
 def projeto_master_index(request, id):

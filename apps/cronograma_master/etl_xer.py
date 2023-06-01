@@ -8,34 +8,35 @@ from django.contrib import messages
 
 import concurrent.futures
 
-def run_etl_xer (arquivo_file, projeto, crono, request):
+def run_etl_xer (arquivo_file, projeto, crono, container, request):
 
     xer_file = Reader(arquivo_file)
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.submit(carga_tabela_task, xer_file, projeto, crono)
-        executor.submit(carga_tabela_taskactv, xer_file, projeto, crono)
-        executor.submit(carga_tabela_calendar, xer_file, projeto, crono)
-        executor.submit(carga_tabela_taskpred, xer_file, projeto, crono)
-        executor.submit(carga_tabela_actvcode, xer_file, projeto, crono)
-        executor.submit(carga_tabela_actvtype, xer_file, projeto, crono)
-        executor.submit(carga_tabela_project, xer_file, projeto, crono)
-        executor.submit(carga_tabela_projws, xer_file, projeto, crono)
-        executor.submit(carga_tabela_rsrc, xer_file, projeto, crono)
-        executor.submit(carga_tabela_udftypec, xer_file, projeto, crono)
-        executor.submit(carga_tabela_udfvalue, xer_file, projeto, crono)
-        executor.submit(carga_tabela_adf_crono, crono)
+        executor.submit(carga_tabela_task, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_taskactv, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_calendar, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_taskpred, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_actvcode, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_actvtype, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_project, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_projws, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_rsrc, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_udftypec, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_udfvalue, xer_file, projeto, crono, container)
+        executor.submit(carga_tabela_adf_crono, crono, container)
 
 
 
 
 
-def carga_tabela_task(xer_file, projeto, crono):
+def carga_tabela_task(xer_file, projeto, crono, container):
     projeto_tasks = xer_file.activities
     for atividade in projeto_tasks:
         carga_xer_task = XerTask.objects.create(
         projeto = projeto,
         execucao = crono,
+        container = container,
         task_id = int(atividade.task_id),
         proj_id = int(atividade.proj_id),
         wbs_id = int(atividade.wbs_id),
@@ -84,7 +85,7 @@ def carga_tabela_task(xer_file, projeto, crono):
         )
 
 
-def carga_tabela_taskactv(xer_file, projeto, crono):
+def carga_tabela_taskactv(xer_file, projeto, crono, container):
     # Tabela TASKACTV
     projeto_taskactv = xer_file.activitycodes
 
@@ -92,6 +93,7 @@ def carga_tabela_taskactv(xer_file, projeto, crono):
         carga_xer_taskactv = XerTaskACTV.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
 
         task_id = int(recurso_atividade.task_id),
         actv_code_type_id = int(recurso_atividade.actv_code_type_id),
@@ -102,12 +104,13 @@ def carga_tabela_taskactv(xer_file, projeto, crono):
 
 
 
-def carga_tabela_calendar(xer_file, projeto, crono):
+def carga_tabela_calendar(xer_file, projeto, crono, container):
     projeto_calendar = xer_file.calendars
     for calendario in projeto_calendar:
         carga_xer_calendar = XerCalendar.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         clndr_id = int(calendario.clndr_id),
         default_flag = calendario.default_flag,
         clndr_name = str(calendario.clndr_name),
@@ -118,12 +121,13 @@ def carga_tabela_calendar(xer_file, projeto, crono):
         day_hr_cnt = calendario.day_hr_cnt,
         )
 
-def carga_tabela_taskpred(xer_file, projeto, crono):
+def carga_tabela_taskpred(xer_file, projeto, crono, container):
     projeto_taskpred = xer_file.relations
     for relacionamento in projeto_taskpred:
         carga_xer_taskpred = XerTaskPRED.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         task_pred_id = int(relacionamento.task_pred_id),
         task_id = int(relacionamento.task_id),
         pred_task_id = int(relacionamento.pred_task_id),
@@ -133,13 +137,14 @@ def carga_tabela_taskpred(xer_file, projeto, crono):
         lag_hr_cnt = float(relacionamento.lag_hr_cnt),
         )
 
-def carga_tabela_actvcode(xer_file, projeto, crono):
+def carga_tabela_actvcode(xer_file, projeto, crono, container):
     # Tabela ACTVCODE
     projeto_actvcode = xer_file.actvcodes
     for codigo in projeto_actvcode:
         carga_xer_actvcode = XerActvcode.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         actv_code_id = int(codigo.actv_code_id),
         parent_actv_code_id = codigo.parent_actv_code_id,
         actv_code_type_id = int(codigo.actv_code_type_id),
@@ -148,13 +153,14 @@ def carga_tabela_actvcode(xer_file, projeto, crono):
         seq_num = int(codigo.seq_num),
         )
 
-def carga_tabela_actvtype(xer_file, projeto, crono):
+def carga_tabela_actvtype(xer_file, projeto, crono, container):
     # Tabela ACTVTYPE
     projeto_actvtype = xer_file.acttypes
     for codigo in projeto_actvtype:
         carga_xer_actvtype = XerActvType.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         actv_code_type_id = int(codigo.actv_code_type_id),
         actv_short_len = int(codigo.actv_short_len),
         seq_num = int(codigo.seq_num),
@@ -163,13 +169,14 @@ def carga_tabela_actvtype(xer_file, projeto, crono):
         actv_code_type_scope = str(codigo.actv_code_type_scope),
         )
 
-def carga_tabela_project(xer_file, projeto, crono):
+def carga_tabela_project(xer_file, projeto, crono,container):
     # Tabela PROJECT
     projeto_projects = xer_file.projects
     for projetoxer in projeto_projects:
         carga_xer_project = XerProject.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         proj_id = int(projetoxer.proj_id),
         proj_short_name = str(projetoxer.proj_short_name),
         def_complete_pct_type = str(projetoxer.def_complete_pct_type),
@@ -182,13 +189,14 @@ def carga_tabela_project(xer_file, projeto, crono):
         last_baseline_update_date = projetoxer.last_baseline_update_date,
         )
 
-def carga_tabela_projws(xer_file, projeto, crono):
+def carga_tabela_projws(xer_file, projeto, crono, container):
     # Tabela PROJWBS
     projeto_wbs = xer_file.wbss
     for wbs in projeto_wbs:
         carga_xer_projws = XerProJWBS.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         wbs_id = int(wbs.wbs_id),
         proj_id = int(wbs.proj_id),
         obs_id = int(wbs.obs_id),
@@ -201,13 +209,14 @@ def carga_tabela_projws(xer_file, projeto, crono):
         parent_wbs_id = int(wbs.parent_wbs_id),
         )
 
-def carga_tabela_rsrc(xer_file, projeto, crono):
+def carga_tabela_rsrc(xer_file, projeto, crono,container):
     # Tabela RSRC
     projeto_rsrc = xer_file.resources
     for recursos in projeto_rsrc:
         carga_xer_rsrc = XerRSRC.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         rsrc_id = int(recursos.rsrc_id),
         clndr_id = int(recursos.clndr_id),
         rsrc_seq_num = int(recursos.rsrc_seq_num),
@@ -221,26 +230,28 @@ def carga_tabela_rsrc(xer_file, projeto, crono):
         rsrc_type = str(recursos.rsrc_type),
         )
 
-def carga_tabela_udftypec(xer_file, projeto, crono):
+def carga_tabela_udftypec(xer_file, projeto, crono,container):
     # Tabela UDFTYPE
     projeto_udftype = xer_file.udftypes
     for codigo in projeto_udftype:
         carga_xer_udftype = XerUDFType.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         udf_type_id = int(codigo.udf_type_id),
         table_name = str(codigo.table_name),
         udf_type_name = str(codigo.udf_type_name),
         udf_type_label = str(codigo.udf_type_label),
         )
 
-def carga_tabela_udfvalue(xer_file, projeto, crono):
+def carga_tabela_udfvalue(xer_file, projeto, crono,container):
     # Tabela UDFVALUE
     projeto_udfvalue = xer_file.udfvalues
     for codigo in projeto_udfvalue:
         carga_xer_udfvalue = XerUDFValue.objects.create(
         projeto=projeto,
         execucao=crono,
+        container=container,
         udf_type_id = int(codigo.udf_type_id),
         fk_id = int(codigo.fk_id),
         proj_id = int(codigo.proj_id),

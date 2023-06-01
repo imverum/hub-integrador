@@ -16,10 +16,10 @@
             <li class="breadcrumb-item active" selected><a class="btn btn-light" href="{% url 'projeto_master_index' projeto.id %}">AWP Master Index</a></li>
             {% endif %}
             {%if projeto.cronograma_contratadas == True %}
-            <li class="breadcrumb-item active" ><a class="btn btn-light" href="">Cronograma Contratadas</a></li>
+            <li class="breadcrumb-item active" ><a class="btn btn-light" href="#">Cronograma Contratadas</a></li>
             {% endif %}
             {%if projeto.cronograma_master == True %}
-            <li class="breadcrumb-item active" ><a class="btn btn-light" href="{% url 'projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
+            <li class="breadcrumb-item active" ><a class="btn btn-light" href="{% url 'container_projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
             {% endif %}
             {%if projeto.bim == True %}
             <li class="breadcrumb-item active" ><a class="btn btn-light" href="">BIM</a></li>

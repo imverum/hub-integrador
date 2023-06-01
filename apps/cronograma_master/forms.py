@@ -54,4 +54,3 @@ class ConfiguraCronogramaMasterForm(forms.ModelForm):
         model = ConfiguraCronogramaMaster
         fields = ('activity_id', 'resource_name', 'resource_type', 'spreadsheet_field', 'planilha', 'linha', 'coluna')
 
-

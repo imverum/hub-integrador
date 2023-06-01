@@ -15,7 +15,7 @@
 <nav arial-label="breadcrumb">
         <ol class="breadcrumb">
             {%if projeto.cronograma_master == True %}
-            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
+            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'container_projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
             {% endif %}
 
             <li class="breadcrumb-item active" selected><a class="btn btn-light" href="{% url 'projeto_home' projeto.id %}">Home</a></li>
@@ -28,8 +28,18 @@
                                                       <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalCurva">Carga Curva</button>
                                                       <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalBaseline">Carga Baseline</button>
                                                       <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalConfiguraCronograma">Configurar Cronograma</button>
+
                                     </div>
+
             </li>
+            <li>
+                <form method="post" action="{% url 'execucao_container_crono_master' container.id %}">
+                    <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Executar o Container</button>
+                </form>
+            </li>
+
             {% endif %}
         </ol>
 </nav>
@@ -102,6 +112,7 @@
                           <div class="form-group">
                               <div class="col-sm-12">
                                   <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+                                  <input type="hidden" name="container_id"  id="container_id" value="{{container.id}}">
 
                                 {{ form_projeto_crono_master.as_p }}
                               </div>
@@ -134,6 +145,7 @@
           <div class="form-group">
               <div class="col-sm-12">
                   <input type="hidden" name="projeto_id"  id="projeto_id_crono" value="{{projeto.id}}">
+                  <input type="hidden" name="container_id"  id="container_id" value="{{container.id}}">
 
                 <input type="file" name="arquivo" required="" id="id_arquivo_crono" required>
 
@@ -166,6 +178,7 @@
           <div class="form-group">
               <div class="col-sm-12">
                   <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+                  <input type="hidden" name="container_id"  id="container_id" value="{{container.id}}">
 
                 {{ form_configura.as_p }}
 
@@ -200,6 +213,7 @@
           <div class="form-group">
               <div class="col-sm-12">
                   <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+                  <input type="hidden" name="container_id"  id="container_id" value="{{container.id}}">
 
                     <input type="file" name="arquivo" id="id_arquivo_baseline" required="">
 

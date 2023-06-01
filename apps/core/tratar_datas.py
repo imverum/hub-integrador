@@ -1,8 +1,11 @@
 from datetime import datetime
-
+import pandas as pd
 
 
 def tratar_data(data):
+    if pd.isna(data):
+        data_variavel = None
+        return data_variavel
     try:
         print(data)
         data_variavel = datetime.strptime(data, "%d/%m/%Y %H:%M")

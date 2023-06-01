@@ -10,7 +10,7 @@ from apps.projeto.models import Projeto
 import xlsxwriter as xls
 import xlsxwriter.utility as xl_util
 
-def run_crono_master_baseline(arquivo_file, projeto, crono, request):
+def run_crono_master_baseline(arquivo_file, projeto, crono, request, container):
     projeto = Projeto.objects.get(id=projeto)
     configuracoes = ConfiguraGED.objects.filter(projeto=projeto).values().first()
     print(configuracoes)
@@ -53,6 +53,7 @@ def run_crono_master_baseline(arquivo_file, projeto, crono, request):
                 carga_stage_baseline = StageCronogramaMasterBaseline.objects.create(
                     execucao=crono,
                     projeto=crono.projeto,
+                    container=container,
 
                     codigo=codigo,
                     descricao_atividade=descricao_atividade,

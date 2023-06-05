@@ -359,3 +359,14 @@ def execucao_container_crono_master(request, id):
     else:
         messages.error(request, "Para solicitar a execução do container você precisa ter uma curva e um cronograma carregados!")
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
+@csrf_exempt
+@login_required
+def container_deletar(request, id):
+
+    container = ContainerCronoMaster.objects.get(id=id)
+    container.delete()
+    messages.success(request, "Container deletado com sucesso!")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

@@ -29,7 +29,7 @@ DEBUG = True
 
 #ALLOWED_HOSTS = ['hubintegrador.azurewebsites.net', 'https://*.hubintegrador.azurewebsites.net/','http://127.0.0.1']
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://hubintegrador.azurewebsites.net/', 'https://*.hubintegrador.azurewebsites.net/', 'http://127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://hubintegrador.azurewebsites.net/', 'https://*.hubintegrador.azurewebsites.net/', 'http://127.0.0.1', 'https://*.87b0-177-136-118-235.ngrok-free.app']
 
 
 # Application definition

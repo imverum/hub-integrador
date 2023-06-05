@@ -123,7 +123,7 @@ def run_crono_master (arquivold_file, projeto_id, crono, request, container):
 
             df_crono["execucao_id"]=crono.id
             df_crono["projeto_id"]=crono.projeto.id
-            df_crono["container_id"]=container
+            df_crono["container_id"]=container.id
             print("AQUI")
             print(df_crono)
             #df_crono.to_excel('arquivo.xlsx', index=False)

@@ -45,6 +45,7 @@
                                                 <th scope="col">Data Criação</th>
                                                 <th scope="col">Data Execução</th>
                                                 <th scope="col">Status</th>
+                                                <th scope="col">Del</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -55,6 +56,7 @@
                                                 <td>{{container.data_ciacao| date:"d/m/Y"}}</td>
                                                 <td>{{container.data_execucao| date:"d/m/Y"}}</td>
                                                 <td>{{container.status}}</td>
+                                                <td><a href="{% url 'container_deletar' container.id %}">Deletar</a></td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>

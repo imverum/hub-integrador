@@ -82,7 +82,11 @@ def run_crono_master (arquivold_file, projeto_id, crono, request, container):
                 df_crono['Valor'] = pd.to_numeric(df_crono['Valor'])
 
                 df_crono['Unidade'] = valor_unidade[1]
+                df_crono["Valor"] = df_crono["Valor"].fillna(0)
+                df_crono["Unidade"] = df_crono["Unidade"].fillna("NA")
             except:
+                df_crono["Valor"] = 0
+                df_crono["Unidade"] = "NA"
                 pass
 
             df_crono['Data'] = df_crono['Data'].str.replace('-', '/')
@@ -110,8 +114,8 @@ def run_crono_master (arquivold_file, projeto_id, crono, request, container):
             df_crono["Unidade"] = df_crono["Unidade"].apply(
                 lambda Unidade: None if pd.isna(Unidade) else Unidade)
 
-            df_crono["Valor"] = df_crono["Valor"].fillna(0)
-            df_crono["Unidade"] = df_crono["Unidade"].fillna("NA")
+            #df_crono["Valor"] = df_crono["Valor"].fillna(0)
+            #df_crono["Unidade"] = df_crono["Unidade"].fillna("NA")
 
             df_crono = df_crono.rename(columns={'Activity ID': 'activity_id'})
             df_crono = df_crono.rename(columns={'Resource Name': 'resource_name'})

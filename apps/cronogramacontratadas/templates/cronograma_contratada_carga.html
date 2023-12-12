@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+{% block main %}
+{% include 'message.html' %}
+
+<div id="loading" style="display:none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/carga.gif' %}" alt="Carregando...">
+</div>
+<div id="loading_fundo" style="display:none; position: fixed; z-index: 9998; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/fundo.png' %}" alt="Carregando...">
+</div>
+<nav arial-label="breadcrumb">
+        <ol class="breadcrumb">
+            {%if projeto.cronograma_master == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'container_projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
+            {% endif %}
+
+            <li class="breadcrumb-item active" selected><a class="btn btn-light" href="{% url 'projeto_home' projeto.id %}">Home</a></li>
+            {%if projeto.cronograma_master == True %}
+            <h1></h1>
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"> Carga Cronograma</button>
+            {% endif %}
+        </ol>
+</nav>
+<div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Cargas Cronogramas</h4>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+                                                <th scope="col">Executado por</th>
+                                                <th scope="col">Data Execução</th>
+                                                <th scope="col">Data Corte</th>
+                                                <th scope="col">Arquivo</th>
+                                                <th scope="col">Edição</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for cronograma in cronogramas %}
+                                            <tr>
+                                                <td>{{cronograma.profile}}</td>
+                                                <td>{{cronograma.data_execucao| date:"d/m/Y"}}</td>
+                                                <td>{{cronograma.data_corte| date:"d/m/Y"}}</td>
+                                                <td>Arquivo</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDelet" onclick="del({{cronograma.id}})"> <span class="fa fa-trash"></span></button>
+                                                    <a href="{% url 'validacao_cronograma_contratdas' cronograma.data_corte contratada.id %}"> Validações </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+<form name="form" id="formregistro" class="form-horizontal" method="post" action="{% url 'execucao_cronograma_contratada_atividades' %}" enctype="multipart/form-data">
+{% csrf_token %}
+    <!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-body">
+          <div class="form-group">
+              <div class="col-sm-12" >
+                      <div class="field">
+                         <div class="card card-primary">
+                              <div class="card-header">
+                                <h3 class="card-title">Cadastro Cronograma Contratada</h3>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                <div id="error-prioridade" class="text-danger"></div>
+
+                                  <div class="row">
+                                    <div class="col-sm-12">
+                                      <!-- text input -->
+                                      <div class="form-group">
+                                          <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+                                          <input type="hidden" name="contratada_id"  id="contratada_id" value="{{contratada.id}}">
+
+                                        <label for="id_tipo_arquivo">Tipo de arquivo:</label>
+                                         <select name="tipoarquivo" class="form-control" id="id_tipo_arquivo" >
+                                              <option value="1">xlsx</option>
+                                              <option value="2">xer</option>
+                                            <!--<option value="3">mpp</option>-->
+                                         </select>
+                                          <br>
+
+                                        {{form.as_p}}
+
+                                          <label for="id_code_xer">Nome do Code:</label>
+                                          <input class="form-control" type="text" name="codexer" maxlength="" required="" id="id_code_xer">
+
+<!--                                          <label for="id_code_xer">Coluna Project:</label>-->
+<!--                                          <select name="colunaproject" class="form-control" id="id_coluna_project" >-->
+<!--                                              <option value="1">Texto 1</option>-->
+<!--                                              <option value="2">Texto 2</option>-->
+<!--                                              <option value="3">Texto 3</option>-->
+<!--                                              <option value="4">Texto 4</option>-->
+<!--                                              <option value="5">Texto 5</option>-->
+<!--                                              <option value="6">Texto 6</option>-->
+<!--                                              <option value="7">Texto 7</option>-->
+<!--                                              <option value="8">Texto 8</option>-->
+<!--                                              <option value="9">Texto 9</option>-->
+<!--                                              <option value="10">Texto 10</option>-->
+<!--                                         </select>-->
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+
+                              </div>
+
+                         <button type="submit" class="btn btn-primary">Salvar</button>
+                         </div>
+
+
+                      </div>
+
+                       </div>
+          </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+</form>
+
+
+<form name="form" id="formrdelet" class="form-horizontal" method="post" action="{% url 'execucao_cronograma_contratada_deletar' %}" enctype="multipart/form-data">
+
+{% csrf_token %}
+<div id="myModalConfirmDelet" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-body">
+          <div class="form-group">
+              <div class="col-sm-12" >
+                      <div class="field">
+                         <div class="card card-danger">
+                              <div class="card-header">
+                                <h3 class="card-title">Deletar Cronograma</h3>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                  <input type="hidden" name="id_delet"  id="id_delet" value="">
+                                  <p>Você deseja deletar esse Cronograma? Essa açõa não tem volta</p>
+
+                            </div>
+                           <button type="submit" class="btn btn-danger">Deletar</button>
+
+                      </div>
+
+                       </div>
+          </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+</form>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    function edit(id){
+        console.log(id);
+        $.ajax({
+            url: "/processos/processo_edit_ajax/" + id,
+            async: true,
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+
+                $('#formredit').trigger("reset");
+
+                $('#id_n_processo_edit').val(data.n_processo);
+                $('#id_advogado_edit').val(data.advogado);
+                $('#id_cliente_edit').val(data.cliente);
+                $('#id_outroenvolvido_edit').val(data.outroenvolvido);
+                $('#id_fase_edit').val(data.fase);
+                $('#id_tipo_acao_edit').val(data.tipo_acao);
+                $('#id_qualificacao_edit').val(data.qualificacao);
+                $('#id_instancia_edit').val(data.instancia);
+                $('#id_d_inicio_edit').val(data.d_inicio);
+                $('#id_comarca_edit').val(data.comarca);
+                $('#id_vara_edit').val(data.vara);
+                $('#id_valor_causa_edit').val(data.valor_causa);
+
+                $('#id_edit').val(id);
+
+                $('#myModalEdit').modal('show');
+
+            }
+        });
+    };
+
+    function del(id){
+      document.getElementById("id_delet").value = id;
+      console.log(id)
+    };
+
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  // Obtém referências aos elementos do DOM
+  var tipoArquivoSelect = document.getElementById("id_tipo_arquivo");
+  var codexerInput = document.getElementById("id_code_xer");
+
+  var arquivoCurvaInput = document.getElementById("id_arquivo_curva");
+
+  // Adiciona um ouvinte de evento para a alteração no seletor
+  tipoArquivoSelect.addEventListener("change", function() {
+    console.log("Função toggleVisibility chamada.");
+
+    // Se o tipo for "xlsx" ou "xer", mostra ou oculta Nome do Code
+    var isXlsxOrXer = tipoArquivoSelect.value === "1" ;
+    console.log(isXlsxOrXer)
+
+    // Oculta Nome do Code e o rótulo associado quando xlsx é selecionado
+    codexerInput.style.display = isXlsxOrXer ? "none" : "block";
+
+
+    // Define as extensões aceitas no campo de arquivo com base no tipo selecionado
+    switch (tipoArquivoSelect.value) {
+      case "1":
+        arquivoCurvaInput.accept = ".xlsx";
+        codexerInput.required = false; // Não requerido para xlsx
+        break;
+      case "2":
+        arquivoCurvaInput.accept = ".xer";
+        codexerInput.required = true;  // Requerido para xer
+        codexerInput.style.display = isXlsxOrXer ? "none" : "block";
+        break;
+      default:
+        arquivoCurvaInput.accept = ".xlsx";
+        codexerInput.required = false; // Não requerido para o padrão
+    }
+  });
+
+  // Chamada inicial para garantir que os campos estejam ocultos/mostrados corretamente ao carregar a página
+  var isXlsxOrXer = tipoArquivoSelect.value === "1";
+  codexerInput.style.display = isXlsxOrXer ? "none" : "block";
+  codexerInput.required = isXlsxOrXer;
+
+  // Define a extensão padrão no campo de arquivo
+  arquivoCurvaInput.accept = "";
+
+  console.log("Script carregado."); // Adiciona um log quando o script é carregado
+  function toggleVisibility(isXlsxOrXer) {
+    codexerInput.style.display = isXlsxOrXer ? "none" : "block";
+
+  }
+</script>
+
+<!--<script>-->
+<!--  // Obtém referências aos elementos do DOM-->
+<!--  var tipoArquivoSelect = document.getElementById("id_tipo_arquivo");-->
+<!--  var codexerInput = document.getElementById("id_code_xer");-->
+<!--  var colunaProjectSelect = document.getElementById("id_coluna_project");-->
+<!--  var arquivoCurvaInput = document.getElementById("id_arquivo_curva");-->
+
+<!--  // Adiciona um ouvinte de evento para a alteração no seletor-->
+<!--  tipoArquivoSelect.addEventListener("change", function() {-->
+<!--    console.log("Função toggleVisibility chamada.");-->
+
+<!--    // Se o tipo for "xlsx" ou "xer", mostra Nome do Code e oculta Coluna Project-->
+<!--    // Se o tipo for "mpp", mostra Coluna Project e oculta Nome do Code-->
+<!--    var isXlsxOrXer = tipoArquivoSelect.value === "1" || tipoArquivoSelect.value === "2";-->
+<!--    colunaProjectSelect.style.display = isXlsxOrXer ? "none" : "block";-->
+<!--    codexerInput.style.display = isXlsxOrXer ? "block" : "none";-->
+<!--    codexerInput.required = isXlsxOrXer;-->
+
+<!--    // Define as extensões aceitas no campo de arquivo com base no tipo selecionado-->
+<!--    switch (tipoArquivoSelect.value) {-->
+<!--      case "1":-->
+<!--        arquivoCurvaInput.accept = ".xlsx";-->
+<!--        break;-->
+<!--      case "2":-->
+<!--        arquivoCurvaInput.accept = ".xer";-->
+<!--        break;-->
+<!--      case "3":-->
+<!--        arquivoCurvaInput.accept = ".mpp";-->
+<!--        break;-->
+<!--      default:-->
+<!--        arquivoCurvaInput.accept = "";-->
+<!--    }-->
+<!--  });-->
+
+<!--  // Chamada inicial para garantir que os campos estejam ocultos/mostrados corretamente ao carregar a página-->
+<!--  var isXlsxOrXer = tipoArquivoSelect.value === "1" || tipoArquivoSelect.value === "2";-->
+<!--  colunaProjectSelect.style.display = isXlsxOrXer ? "none" : "block";-->
+<!--  codexerInput.style.display = isXlsxOrXer ? "block" : "none";-->
+<!--  codexerInput.required = isXlsxOrXer;-->
+
+<!--  // Define as extensões aceitas no campo de arquivo com base no tipo inicialmente selecionado-->
+<!--  switch (tipoArquivoSelect.value) {-->
+<!--    case "1":-->
+<!--      arquivoCurvaInput.accept = ".xlsx";-->
+<!--      break;-->
+<!--    case "2":-->
+<!--      arquivoCurvaInput.accept = ".xer";-->
+<!--      break;-->
+<!--    case "3":-->
+<!--      arquivoCurvaInput.accept = ".mpp";-->
+<!--      break;-->
+<!--    default:-->
+<!--      arquivoCurvaInput.accept = "";-->
+<!--  }-->
+
+<!--  console.log("Script carregado."); // Adiciona um log quando o script é carregado-->
+<!--</script>-->
+{% endblock  %}

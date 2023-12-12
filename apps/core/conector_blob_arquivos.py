@@ -5,6 +5,10 @@ from azure.storage.blob import BlobServiceClient
 from django.http import HttpResponse, HttpResponseRedirect
 from decouple import config
 
+from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
+from datetime import datetime, timedelta
+
+
 
 # obtenha a instância BlobServiceClient
 blob_service_client = BlobServiceClient.from_connection_string("DefaultEndpointsProtocol=https;AccountName=verumsys;AccountKey=zsjENq7RHecRcbSOGJrIjaXdV/z4kh0KtTsf/J/xy1FeANFcnXSnh6LDytspbpbF4Q5OwJOK4UnC+ASt4uembg==;EndpointSuffix=core.windows.net")
@@ -78,26 +82,41 @@ def arquiv_xer_storage(blob_name):
 
 
 
+def caminho_file(request, file_name):
+    try:
+        account_name = 'verumsys'
+        account_key = 'zsjENq7RHecRcbSOGJrIjaXdV/z4kh0KtTsf/J/xy1FeANFcnXSnh6LDytspbpbF4Q5OwJOK4UnC+ASt4uembg=='
+        container_name = 'interfacehubintegrador'
+
+        # Crie o serviço do blob
+        blob_service_client = BlobServiceClient(account_url=f"https://{account_name}.blob.core.windows.net",
+                                                credential=account_key)
+
+        # Obtenha a referência para o blob
+        container_client = blob_service_client.get_container_client(container_name)
+        blob_client = container_client.get_blob_client(file_name)
+
+        # Gere uma URL de Assinatura Compartilhada (SAS) para o blob
+        sas_token = generate_blob_sas(
+            account_name=account_name,
+            container_name=container_name,
+            blob_name=file_name,
+            account_key=account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),  # Defina o tempo de expiração apropriado
+        )
+
+        blob_url_with_sas = f"{blob_client.url}?{sas_token}"
+        print("blob_url_with_sas")
+        print(blob_url_with_sas)
+
+        return blob_url_with_sas
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    except:
+        messages.error(request, 'Arquivo não encontrado!')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 

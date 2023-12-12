@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'apps.fornecedores.apps.FornecedoresConfig',
     'apps.cronograma_master.apps.CronogramaMasterConfig',
     'apps.master_index.apps.MasterIndexConfig',
+    'apps.cronogramacontratadas.apps.CronogramacontratadasConfig',
 ]
 
 MIDDLEWARE = [

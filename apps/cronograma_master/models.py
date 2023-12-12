@@ -51,7 +51,7 @@ class ExecucaoCronoMaster(models.Model):
 
 
 class StageCronogramaMaster(models.Model):
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.PROTECT, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -91,7 +91,7 @@ class ConfiguraCronogramaMaster(models.Model):
 
 class LogProcessamentoCronogramaMaster(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     log = models.TextField(blank=True, null=True)
     tipo = models.CharField(max_length=300, blank=True, null=True)
 
@@ -106,7 +106,7 @@ class LogProcessamentoCronogramaMaster(models.Model):
 
 
 class ADFCronoMaster(models.Model):
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.PROTECT, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
         db_table = 'execucao_cronograma_master_adf'
@@ -119,7 +119,7 @@ class ADFCronoMaster(models.Model):
 
 class XerActvcode(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     actv_code_id = models.IntegerField(blank=True, null=True)
     parent_actv_code_id = models.CharField(max_length=300, blank=True, null=True)
@@ -140,7 +140,7 @@ class XerActvcode(models.Model):
 
 class XerActvType(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
 
     actv_code_type_id = models.IntegerField(blank=True, null=True)
@@ -163,7 +163,7 @@ class XerActvType(models.Model):
 
 class XerCalendar(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
 
     clndr_id = models.IntegerField(blank=True, null=True)
@@ -187,7 +187,7 @@ class XerCalendar(models.Model):
 
 class XerProject(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
 
     proj_id = models.IntegerField(blank=True, null=True)
@@ -214,7 +214,7 @@ class XerProject(models.Model):
 
 class XerProJWBS(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
 
     wbs_id = models.IntegerField(blank=True, null=True)
@@ -240,7 +240,7 @@ class XerProJWBS(models.Model):
 
 class XerRSRC(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
 
     rsrc_id = models.IntegerField(blank=True, null=True)
@@ -375,13 +375,10 @@ class XerUDFType(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
     execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
-
     udf_type_id = models.IntegerField(blank=True, null=True)
     table_name = models.CharField(max_length=300, blank=True, null=True)
     udf_type_name = models.CharField(max_length=300, blank=True, null=True)
     udf_type_label = models.CharField(max_length=300, blank=True, null=True)
-
-
 
 
     class Meta:
@@ -398,7 +395,6 @@ class XerUDFValue(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
     execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.CASCADE, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
-
     udf_type_id = models.IntegerField(blank=True, null=True)
     fk_id = models.IntegerField(blank=True, null=True)
     proj_id = models.IntegerField(blank=True, null=True)
@@ -415,7 +411,7 @@ class XerUDFValue(models.Model):
 
 
 class ADFCronoMasterCronogramas(models.Model):
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.PROTECT, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     arquivo = models.CharField(max_length=300, blank=True, null=True)
     status_execucao_adf = models.CharField(max_length=200, blank=True, null=True, default='Concluído')
     projeto = models.ForeignKey(Projeto, on_delete=models.PROTECT, blank=True, null=True)
@@ -425,11 +421,8 @@ class ADFCronoMasterCronogramas(models.Model):
         verbose_name_plural = 'BD Execucao Cronograma Master Cronogramas ADF'
         verbose_name = 'BD Execucao Cronograma Master Cronogramas ADF'
 
-
-
-
 class StageCronogramaMasterBaseline(models.Model):
-    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.PROTECT, blank=True, null=True)
+    execucao = models.ForeignKey(ExecucaoCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
     container = models.ForeignKey(ContainerCronoMaster, on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -455,3 +448,35 @@ class ADFContainerCronoMasterCronogramas(models.Model):
         db_table = 'execucao_cronograma_master_container_adf'
         verbose_name_plural = 'BD Execucao Container Master Cronogramas ADF'
         verbose_name = 'BD Execucao Container Master Cronogramas ADF'
+
+
+class TabelaTaskAvancoMaster(models.Model):
+    projeto = models.ForeignKey(Projeto, on_delete=models.PROTECT, blank=True, null=True)
+
+    activity_id = models.CharField(max_length=200, blank=True, null=True)
+    activity_status = models.CharField(max_length=200, blank=True, null=True)
+    wbs_code = models.CharField(max_length=200, blank=True, null=True)
+    op_cwp = models.CharField(max_length=200, blank=True, null=True)
+    activity_name = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        db_table = 'cronograma_tabela_avanco_task'
+        verbose_name_plural = 'BD Master Tabela Avanco Task'
+        verbose_name = 'BD Master Tabela Avanco Task'
+
+
+class TabelaTaskrsrcAvancoMaster(models.Model):
+    projeto = models.ForeignKey(Projeto, on_delete=models.PROTECT, blank=True, null=True)
+
+    rsrc_id = models.CharField(max_length=200, blank=True, null=True)
+    activity_id = models.CharField(max_length=200, blank=True, null=True)
+    task_status_code = models.CharField(max_length=200, blank=True, null=True)
+    role_id = models.CharField(max_length=200, blank=True, null=True)
+    acct_id = models.CharField(max_length=200, blank=True, null=True)
+    target_qty = models.DecimalField(max_digits=38, decimal_places=5, blank=True, null=True)
+
+    class Meta:
+        db_table = 'cronograma_tabela_avanco_taskrsrc'
+        verbose_name_plural = 'BD Master Tabela Avanco Taskrsrc'
+        verbose_name = 'BD Master Tabela Avanco Taskrsrc'
+

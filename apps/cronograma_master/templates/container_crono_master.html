@@ -17,6 +17,9 @@
             {%if projeto.cronograma_master == True %}
             <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'container_projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
             {% endif %}
+            {%if projeto.cronograma_master == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'avanco_projeto_crono_master' projeto.id %}">Dados Avanço</a></li>
+            {% endif %}
 
             <li class="breadcrumb-item active" selected><a class="btn btn-light" href="{% url 'projeto_home' projeto.id %}">Home</a></li>
             {%if projeto.cronograma_master == True %}
@@ -26,6 +29,7 @@
             </form>
 
             {% endif %}
+
         </ol>
 </nav>
 <div class="col-lg-12">

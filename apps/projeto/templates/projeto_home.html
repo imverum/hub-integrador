@@ -33,6 +33,7 @@
             {%if projeto.comissionamento == True %}
             <li class="breadcrumb-item active" ><a class="btn btn-light" href="">Comissionamento</a></li>
             {% endif %}
+            <li class="breadcrumb-item active" ><a href="{% url 'list_cronograma_contratada' projeto.id %}">Cronograma Contratadas</a></li>
 
         </ol>
 </nav>

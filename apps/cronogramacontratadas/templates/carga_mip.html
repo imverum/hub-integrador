@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+
+
+{% block main %}
+
+<div>
+    <div class="box border -1">
+    <div class="lefty">
+        <h1>Carga Dados</h1>
+        <div class="card border-light mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+
+                <form class="card-text" method="post" enctype="multipart/form-data" action="{% url 'carga_mip' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="file" name="xer_file" class="form-control-file">
+                    </div>
+                    <div class="col text-center card-footer bg-transparent border-light">
+
+                        <button class="btn btn-success" type="submit">Converter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+
+
+</div>
+</div>
+
+
+
+
+
+{% endblock %}
+

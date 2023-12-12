@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+{% block main %}
+{% include 'message.html' %}
+
+<div id="loading" style="display:none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/carga.gif' %}" alt="Carregando...">
+</div>
+<div id="loading_fundo" style="display:none; position: fixed; z-index: 9998; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/fundo.png' %}" alt="Carregando...">
+</div>
+<nav arial-label="breadcrumb">
+        <ol class="breadcrumb">
+            {%if projeto.cronograma_master == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'container_projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
+            {% endif %}
+            {%if projeto.cronograma_master == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'avanco_projeto_crono_master' projeto.id %}">Dados Avanço</a></li>
+            {% endif %}
+
+            <li class="breadcrumb-item active" selected><a class="btn btn-light" href="{% url 'projeto_home' projeto.id %}">Home</a></li>
+            {%if projeto.cronograma_master == True %}
+            <h1></h1>
+
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Carga Tabela Avanço</button>
+
+            {% endif %}
+            <li>
+                <a href="{% url 'planilha_avanco_projeto' projeto.id %}" class="btn btn-success" >Planilha avanço</a>
+            </li>
+
+
+
+        </ol>
+</nav>
+<div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Tabela Avanço</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+                                                <th scope="col">activity_id</th>
+                                                <th scope="col">activity_status</th>
+                                                <th scope="col">wbs_code</th>
+                                                <th scope="col">op_cwp</th>
+                                                <th scope="col">activity_name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for task in tasks %}
+                                            <tr>
+                                                <td>{{task.activity_id}}</td>
+                                                <td>{{task.profile.activity_status}}</td>
+                                                <td>{{task.wbs_code}}</td>
+                                                <td>{{task.op_cwp}}</td>
+                                                <td>{{task.activity_name}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+<form name="form" id="formregistro" class="form-horizontal" method="post" action="{% url 'execucao_cronograma_master_avanco' projeto.id %}" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+    <!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-body">
+          <div class="form-group">
+              <div class="col-sm-12" >
+                      <div class="field">
+                         <div class="card card-primary">
+                              <div class="card-header">
+                                <h3 class="card-title">Carga Tabela Avanço</h3>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                <div id="error-prioridade" class="text-danger"></div>
+
+                                  <div class="row">
+                                    <div class="col-sm-12">
+                                      <!-- text input -->
+                                      <div class="form-group">
+                                          <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+                                          <input type="hidden" name="contratada_id"  id="contratada_id" value="{{contratada.id}}">
+
+
+                                        {{form.as_p}}
+
+
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+
+                              </div>
+
+                         <button type="submit" class="btn btn-primary">Salvar</button>
+                         </div>
+
+
+                      </div>
+
+                       </div>
+          </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+</form>
+
+{% endblock %}

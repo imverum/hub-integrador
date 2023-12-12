@@ -44,6 +44,8 @@ class ExecucaoLD(models.Model):
         verbose_name_plural = 'BD Execucao LD'
         verbose_name = 'BD Execucao LD'
 
+
+
 class StageLd(models.Model):
     execucao = models.ForeignKey(ExecucaoLD, on_delete=models.PROTECT, blank=True, null=True)
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)

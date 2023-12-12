@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load custom_filter_tags %}
+{% load static %}
+
+
+{% block main %}
+{% include 'message.html' %}
+
+<div id="loading" style="display:none; position: fixed; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/carga.gif' %}" alt="Carregando...">
+</div>
+<div id="loading_fundo" style="display:none; position: fixed; z-index: 9998; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <img src="{% static '/images/fundo.png' %}" alt="Carregando...">
+</div>
+<nav arial-label="breadcrumb">
+        <ol class="breadcrumb">
+            {%if projeto.cronograma_master == True %}
+            <li class="breadcrumb-item active" ><a class="btn btn-info" href="{% url 'container_projeto_crono_master' projeto.id %}">Cronograma Master</a></li>
+            {% endif %}
+
+            <li class="breadcrumb-item active" selected><a class="btn btn-light" href="{% url 'projeto_home' projeto.id %}">Home</a></li>
+            {%if projeto.cronograma_master == True %}
+            <h1></h1>
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"> Criar Cronograma</button>
+
+            {% endif %}
+        </ol>
+</nav>
+<div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Cronogramas Contrtada</h4>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+                                                <th scope="col">Contratada</th>
+                                                <th scope="col">Data criação</th>
+                                                <th scope="col">Edição</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for cronograma in cronogramas %}
+                                            <tr>
+                                                <td><a href="{% url 'list_cargas_cronograma_contratada' cronograma.id %}">{{cronograma.contratada}}</a></td>
+                                                <td>{{cronograma.data_ciacao| date:"d/m/Y"}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDelet" onclick="del({{cronograma.id}})"> <span class="fa fa-trash"></span></button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+<form name="form" id="formregistro" class="form-horizontal" method="post" action="{% url 'register_cronograma_contratada' projeto.id %}" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+    <!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-body">
+          <div class="form-group">
+              <div class="col-sm-12" >
+                      <div class="field">
+                         <div class="card card-primary">
+                              <div class="card-header">
+                                <h3 class="card-title">Cadastro Cronograma Contratada</h3>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                <div id="error-prioridade" class="text-danger"></div>
+
+                                  <div class="row">
+                                    <div class="col-sm-12">
+                                      <!-- text input -->
+                                      <div class="form-group">
+
+                                        {{form.as_p}}
+
+
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+
+                              </div>
+
+                         <button type="submit" class="btn btn-primary">Salvar</button>
+                         </div>
+
+
+                      </div>
+
+                       </div>
+          </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+</form>
+
+
+<form name="form" id="formrdelet" class="form-horizontal" method="post" action="{% url 'processo_documento_deletar' %}" enctype="multipart/form-data">
+
+{% csrf_token %}
+<div id="myModalConfirmDelet" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-body">
+          <div class="form-group">
+              <div class="col-sm-12" >
+                      <div class="field">
+                         <div class="card card-danger">
+                              <div class="card-header">
+                                <h3 class="card-title">Deletar Cronograma</h3>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                  <input type="hidden" name="id_delet"  id="id_delet" value="">
+                                  <p>Você deseja deletar esse Cronograma? Essa açõa não tem volta</p>
+
+                            </div>
+                           <button type="submit" class="btn btn-danger">Deletar</button>
+
+                      </div>
+
+                       </div>
+          </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+</form>
+
+
+
+<script>
+    function edit(id){
+        console.log(id);
+        $.ajax({
+            url: "/processos/processo_edit_ajax/" + id,
+            async: true,
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+
+                $('#formredit').trigger("reset");
+
+                $('#id_n_processo_edit').val(data.n_processo);
+                $('#id_advogado_edit').val(data.advogado);
+                $('#id_cliente_edit').val(data.cliente);
+                $('#id_outroenvolvido_edit').val(data.outroenvolvido);
+                $('#id_fase_edit').val(data.fase);
+                $('#id_tipo_acao_edit').val(data.tipo_acao);
+                $('#id_qualificacao_edit').val(data.qualificacao);
+                $('#id_instancia_edit').val(data.instancia);
+                $('#id_d_inicio_edit').val(data.d_inicio);
+                $('#id_comarca_edit').val(data.comarca);
+                $('#id_vara_edit').val(data.vara);
+                $('#id_valor_causa_edit').val(data.valor_causa);
+
+                $('#id_edit').val(id);
+
+                $('#myModalEdit').modal('show');
+
+            }
+        });
+    };
+
+    function del(id){
+      document.getElementById("id_delet").value = id;
+      console.log(id)
+    };
+
+</script>
+
+
+
+
+{% endblock %}

@@ -26,14 +26,13 @@
                                     <div class="dropdown-menu" x-placement="top-start" style="position: absolute; transform: translate3d(0px, -2px, 0px); top: 0px; left: 0px; will-change: transform;">
                                                       <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalCronograma">Carga Cronograma</button>
                                                       <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalCurva">Carga Curva</button>
-                                                      <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalBaseline">Carga Baseline</button>
+                                                      <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalBaseline">Curva Baseline</button>
+                                                      <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalBaselineXer">Cronograma Baseline</button>
                                                       <button type="button" class="dropdown-item" data-toggle="modal" data-target="#myModalConfiguraCronograma">Configurar Cronograma</button>
-
                                     </div>
-
             </li>
             <li>
-                <form method="post" action="{% url 'execucao_container_crono_master' container.id %}">
+                <form method="post" action="{% url 'executar_avanco_container_maste' container.id %}">
                     <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Executar o Container</button>
@@ -60,6 +59,7 @@
                                                 <th scope="col">Arquivo</th>
                                                 <th scope="col">Log</th>
                                                 <th scope="col">Status</th>
+                                                <th scope="col">Del</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -82,7 +82,7 @@
                                                 {% else %}
                                                 <td style="color:green ;font-weight: bold">{{execucao.status}}</td>
                                                 {% endif %}
-
+                                                <td><a href="{% url 'execuca_deletar' execucao.id %}">Deletar</a></td>
 
 
                                             </tr>
@@ -230,6 +230,40 @@
 </form>
 
 
+<form name="formmodal" id="formbaselinexer"  method="post" action="{% url 'execucao_cronograma_master_crono_baseline_xer' %}" enctype="multipart/form-data">
+{% csrf_token %}
+    <!-- Modal -->
+<div class="modal fade show" id="myModalBaselineXer" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-header">
+          <h3 class="modal-title">Carga Baseline</h3>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" >
+
+          <div class="form-group">
+              <div class="col-sm-12">
+                  <input type="hidden" name="projeto_id"  id="projeto_id" value="{{projeto.id}}">
+                  <input type="hidden" name="container_id"  id="container_id" value="{{container.id}}">
+
+                    <input type="file" name="arquivo" id="id_arquivo_baseline_xer" required="">
+
+              </div>
+          </div>
+
+      </div>
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary"  onclick="closemodalcargabase()">Carga</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+
 {% endblock %}
 
 {% block jsadd %}
@@ -302,6 +336,19 @@ function closemodalcargabase() {
       console.log(fileInput.files.length);
     }
   };
+
+function closemodalcargabasexer() {
+    const fileInput = document.querySelector('#id_arquivo_baseline_xer');
+    if (fileInput.files.length > 0) {
+      $('#myModalBaselineXer').modal('hide');
+      $('#loading').show();
+
+      console.log(fileInput.files.length);
+    } else {
+      console.log(fileInput.files.length);
+    }
+  };
+
 
 </script>
 {% endblock  %}

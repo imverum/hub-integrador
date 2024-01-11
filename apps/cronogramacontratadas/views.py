@@ -8,8 +8,7 @@ from apps.cronograma_master.models import TabelaTaskAvancoMaster
 from apps.cronogramacontratadas.carga_app import carga_app, etl_pandas_xer, carga_dados_banco
 from apps.cronogramacontratadas.etl_cronograma_contratada_atividades import run_crono_contratada_atividades
 from apps.cronogramacontratadas.forms import CronogramaCrontratadaAddForm, CronogramaContratadaFormCarga
-from apps.cronogramacontratadas.models import CronogramaContratada, ExecucaoCronoContratadas, \
-    StageCronogramaContratadaAtividade
+from apps.cronogramacontratadas.models import CronogramaContratada, ExecucaoCronoContratadas, StageCronogramaContratadaAtividade
 from apps.cronogramacontratadas.validacao_cronograma_contratada import cria_planilha_validacao
 from apps.fornecedores.models import Fornecedores
 from apps.projeto.models import Projeto
@@ -22,7 +21,9 @@ import io
 from django.http import HttpResponse
 import tempfile
 import os
-# Create your views here.
+
+
+
 @csrf_exempt
 @login_required
 def list_cronograma_contratada(request, id):
@@ -158,6 +159,10 @@ def execucao_cronograma_contratada_atividades(request):
 
             data_corte = crono.data_corte
             op_wp = request.POST.get("codexer")
+            if arquivo_file.name.endswith('xer') and op_wp== None:
+                messages.error(request,'Para carregar um arquivo xer você precisa informar o nome do code')
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
             run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte, contratada_id, op_wp)
             if crono.status == 'ERRO':
 
@@ -193,8 +198,11 @@ def execucao_cronograma_contratada_deletar(request):
 @csrf_exempt
 @login_required
 def validacao_cronograma_contratdas(request, data_corte, contratada):
+    print(data_corte)
+    print(contratada)
     contratada = CronogramaContratada.objects.get(id=contratada)
-    atividades = StageCronogramaContratadaAtividade.objects.filter(data_corte=data_corte,contratada=contratada )
+    print(contratada)
+    atividades = StageCronogramaContratadaAtividade.objects.filter(data_corte=data_corte,contratada=contratada)
     print(atividades)
     projeto = atividades.first().projeto if atividades.exists() else None
     ops_master = TabelaTaskAvancoMaster.objects.filter(projeto=projeto).values_list('op_cwp', flat=True).distinct()

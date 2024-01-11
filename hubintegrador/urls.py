@@ -13,4 +13,5 @@ urlpatterns = [
     path('crono_master/', include('apps.cronograma_master.urls')),
     path('master_index/', include('apps.master_index.urls')),
     path('cronograma_contratada/', include('apps.cronogramacontratadas.urls')),
+    path('compras/', include('apps.controlecompras.urls')),
 ]

@@ -31,7 +31,7 @@
                                             <tr>
                                                 <th><a href="{% url 'projeto_home' projeto.projeto.id %}">{{projeto.projeto.projeto}}</a></th>
                                                 <td>{{projeto.projeto.codigo_projeto}}</td>
-                                                <td>{{projeto.projeto.descricao}}</td>
+                                                <td>{{projeto.projeto.descricao}} {{projeto.projeto.id}}</td>
                                                 <td>{{projeto.projeto.inicio_projeto| date:"d/m/Y"}}</td>
                                                 <td>{{projeto.projeto.termino_projeto| date:"d/m/Y"}}</td>
                                                 {% if profile.role == 1 %}
@@ -45,7 +45,6 @@
                                                 {%endif%}
 
                                                 <td>
-
                                                      <button type="button" class="btn btn-primary" onclick="atividade({{projeto.projeto.id}})" > <span class="fa fa-edit"></span></button>
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDeletCargo" onclick="atividadedelet({{projeto.projeto.id}})" > <span class="fa fa-trash"></span></button>
                                                 </td>
@@ -90,7 +89,6 @@
   </div>
 </div>
 </form>
-
 
 <div id="myModalEdit" class="modal fade" role="dialog">
   <div class="modal-dialog">

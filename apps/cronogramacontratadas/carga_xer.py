@@ -170,6 +170,7 @@ class XerTableRender:
 
     def _default_transform(self, df_table):
         df_table = df_table.replace(r'^\s*$', None, regex=True)
+
         return df_table
 
     def _task(self, df_table):
@@ -200,14 +201,23 @@ class XerTableRender:
         df_table.loc[df_table['start_date'].isna(), 'start_date'] = df_table['restart_date']
         df_table.loc[df_table['start_date'].isna(), 'start_date'] = df_table['early_start_date']
         df_table.loc[df_table['start_date'].isna(), 'start_date'] = df_table['target_start_date']
+        df_table['start_date'] = pd.to_datetime(df_table['start_date'])
+
+
 
         df_table['end_date'] = df_table['act_end_date']
         df_table.loc[df_table['end_date'].isna(), 'end_date'] = df_table['reend_date']
         df_table.loc[df_table['end_date'].isna(), 'end_date'] = df_table['early_end_date']
         df_table.loc[df_table['end_date'].isna(), 'end_date'] = df_table['target_end_date']
-
-        df_table['Start'] = df_table['start_date'].dt.strftime('%d/%m/%Y') + ' A'
-        df_table['Finish'] = df_table['end_date'].dt.strftime('%d/%m/%Y') + ' A'
+        df_table['end_date'] = pd.to_datetime(df_table['end_date'])
+        try:
+            df_table['Start'] = df_table['start_date'].dt.strftime('%d/%m/%Y') + ' A'
+        except:
+            df_table['Start'] = df_table['start_date'].dt.strftime('%d/%m/%Y')
+        try:
+            df_table['Finish'] = df_table['end_date'].dt.strftime('%d/%m/%Y') + ' A'
+        except:
+            df_table['Finish'] = df_table['end_date'].dt.strftime('%d/%m/%Y')
 
         df_table.loc[~df_table['act_start_date'].isna(), 'Start'] = df_table['act_start_date']
         df_table.loc[~df_table['act_end_date'].isna(), 'Finish'] = df_table['act_end_date']

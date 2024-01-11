@@ -192,9 +192,6 @@ def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte,
 
     # Inserir as instâncias no banco de dados
 
-
-
-
     StageCronogramaContratadaAtividade.objects.bulk_create(instancias)
 
 

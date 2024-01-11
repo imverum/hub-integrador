@@ -20,8 +20,7 @@ class CronogramaContratada(models.Model):
         verbose_name_plural = 'BD Contratada Container Cronogramas'
         verbose_name = 'BD Container Cronogramas'
 
-    def __str__(self):
-        return self.nome
+
 
 
 

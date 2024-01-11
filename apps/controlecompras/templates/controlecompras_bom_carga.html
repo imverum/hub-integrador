@@ -104,7 +104,7 @@
                                         {{form.as_p}}
 
                                           <label for="id_code_xer">Nome do Code:</label>
-                                          <input class="form-control" type="text" name="codexer" maxlength=""  id="id_code_xer" required="false">
+                                          <input class="form-control" type="text" name="codexer" maxlength="" required="" id="id_code_xer">
 
 <!--                                          <label for="id_code_xer">Coluna Project:</label>-->
 <!--                                          <select name="colunaproject" class="form-control" id="id_coluna_project" >-->
@@ -231,48 +231,50 @@
   // Obtém referências aos elementos do DOM
   var tipoArquivoSelect = document.getElementById("id_tipo_arquivo");
   var codexerInput = document.getElementById("id_code_xer");
+
   var arquivoCurvaInput = document.getElementById("id_arquivo_curva");
 
   // Adiciona um ouvinte de evento para a alteração no seletor
-  tipoArquivoSelect.addEventListener("change", function () {
+  tipoArquivoSelect.addEventListener("change", function() {
     console.log("Função toggleVisibility chamada.");
 
     // Se o tipo for "xlsx" ou "xer", mostra ou oculta Nome do Code
-    var isXlsxOrXer = tipoArquivoSelect.value === "1";
-    console.log(isXlsxOrXer);
+    var isXlsxOrXer = tipoArquivoSelect.value === "1" ;
+    console.log(isXlsxOrXer)
 
     // Oculta Nome do Code e o rótulo associado quando xlsx é selecionado
     codexerInput.style.display = isXlsxOrXer ? "none" : "block";
+
 
     // Define as extensões aceitas no campo de arquivo com base no tipo selecionado
     switch (tipoArquivoSelect.value) {
       case "1":
         arquivoCurvaInput.accept = ".xlsx";
-        codexerInput.required = false; // Não obrigatório quando tipo é "1"
+        codexerInput.required = false; // Não requerido para xlsx
         break;
       case "2":
         arquivoCurvaInput.accept = ".xer";
+        codexerInput.required = true;  // Requerido para xer
         codexerInput.style.display = isXlsxOrXer ? "none" : "block";
-        codexerInput.required = true; // Obrigatório quando tipo é "2"
         break;
       default:
         arquivoCurvaInput.accept = ".xlsx";
-        codexerInput.required = true; // Obrigatório para outros tipos
+        codexerInput.required = false; // Não requerido para o padrão
     }
   });
 
   // Chamada inicial para garantir que os campos estejam ocultos/mostrados corretamente ao carregar a página
   var isXlsxOrXer = tipoArquivoSelect.value === "1";
   codexerInput.style.display = isXlsxOrXer ? "none" : "block";
-  codexerInput.required = !isXlsxOrXer; // Define como não obrigatório quando isXlsxOrXer é verdadeiro
+  codexerInput.required = isXlsxOrXer;
 
   // Define a extensão padrão no campo de arquivo
   arquivoCurvaInput.accept = "";
 
   console.log("Script carregado."); // Adiciona um log quando o script é carregado
-
   function toggleVisibility(isXlsxOrXer) {
     codexerInput.style.display = isXlsxOrXer ? "none" : "block";
+
   }
 </script>
 

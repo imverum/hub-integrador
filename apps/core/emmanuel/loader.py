@@ -208,7 +208,7 @@ def _cronograma(file_path, execucao_id, bl_path_xer, engine, cnxn, projeto_id):
     ] = "Início Atrasado"
     df_atividades.loc[
         (
-            (df_atividades['target_end_date'] < df_atividades['last_recalc_date']) &
+            (df_atividades['target_end_date'] < df_atividades['last_recalc_date']) & ### VERIFICAR CONTA
             (df_atividades['status_code'] == "Complete")
         ),
         'status_atraso'

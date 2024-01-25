@@ -367,7 +367,6 @@ class XerTaskPRED(models.Model):
         verbose_name_plural = 'BD XER TaskPRED'
         verbose_name = 'BD XER TaskPRED'
 
-
     def __str__(self):
         return self.projeto
 
@@ -457,7 +456,15 @@ class TabelaTaskAvancoMaster(models.Model):
     activity_status = models.CharField(max_length=200, blank=True, null=True)
     wbs_code = models.CharField(max_length=200, blank=True, null=True)
     op_cwp = models.CharField(max_length=200, blank=True, null=True)
+    OP_PACOTE_DE_SUPRIMENTOS = models.CharField(max_length=200, blank=True, null=True)
     activity_name = models.CharField(max_length=200, blank=True, null=True)
+    target_drtn_hr_cnt = models.CharField(max_length=200, blank=True, null=True)
+    complete_pct = models.DecimalField(max_digits=38, decimal_places=5, blank=True, null=True)
+    start_date = models.CharField(max_length=200, blank=True, null=True)
+    end_date = models.CharField(max_length=200, blank=True, null=True)
+    act_start_date = models.CharField(max_length=200, blank=True, null=True)
+    act_end_date = models.CharField(max_length=200, blank=True, null=True)
+
 
     class Meta:
         db_table = 'cronograma_tabela_avanco_task'
@@ -473,7 +480,15 @@ class TabelaTaskrsrcAvancoMaster(models.Model):
     task_status_code = models.CharField(max_length=200, blank=True, null=True)
     role_id = models.CharField(max_length=200, blank=True, null=True)
     acct_id = models.CharField(max_length=200, blank=True, null=True)
+    rsrc_type = models.CharField(max_length=200, blank=True, null=True)
+    act_start_date = models.CharField(max_length=200, blank=True, null=True)
+    act_end_date = models.CharField(max_length=200, blank=True, null=True)
     target_qty = models.DecimalField(max_digits=38, decimal_places=5, blank=True, null=True)
+    act_qty = models.DecimalField(max_digits=38, decimal_places=5, blank=True, null=True)
+    remain_qty = models.DecimalField(max_digits=38, decimal_places=5, blank=True, null=True)
+    target_cost = models.DecimalField(max_digits=38, decimal_places=5, blank=True, null=True)
+    act_cost = models.DecimalField(max_digits=38, decimal_places=5, blank=True, null=True)
+    remain_cost = models.DecimalField(max_digits=38, decimal_places=5, blank=True, null=True)
 
     class Meta:
         db_table = 'cronograma_tabela_avanco_taskrsrc'

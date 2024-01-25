@@ -48,14 +48,50 @@ def run_avanco_master(arquivo_file, projeto_id):
     df_crono['Activity Name'] = df_crono['Activity Name'].apply(
         lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
 
+    df_crono['OP_PACOTE DE SUPRIMENTOS'] = df_crono['OP_PACOTE DE SUPRIMENTOS'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Original Duration(d)'] = df_crono['Original Duration(d)'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Activity % Complete(%)'] = df_crono['Activity % Complete(%)'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Activity % Complete(%)'] = df_crono['Activity % Complete(%)'].apply(
+        lambda spreadsheet_field: float(str(spreadsheet_field).replace(',', '.')) if ',' in str(
+            spreadsheet_field) else spreadsheet_field
+    )
+
+    df_crono['(*)Start'] = df_crono['(*)Start'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['(*)Finish'] = df_crono['(*)Finish'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Actual Start'] = df_crono['Actual Start'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Actual Finish'] = df_crono['Actual Finish'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
 
     df_crono = df_crono.rename(columns={'Activity ID': 'activity_id'})
     df_crono = df_crono.rename(columns={'Activity Status': 'activity_status'})
     df_crono = df_crono.rename(columns={'WBS Code': 'wbs_code'})
     df_crono = df_crono.rename(columns={'OP_CWP': 'op_cwp'})
+    df_crono = df_crono.rename(columns={'OP_PACOTE DE SUPRIMENTOS': 'OP_PACOTE_DE_SUPRIMENTOS'})
     df_crono = df_crono.rename(columns={'Activity Name': 'activity_name'})
+    df_crono = df_crono.rename(columns={'Original Duration(d)': 'target_drtn_hr_cnt'})
+    df_crono = df_crono.rename(columns={'Activity % Complete(%)': 'complete_pct'})
+    df_crono = df_crono.rename(columns={'(*)Start': 'start_date'})
+    df_crono = df_crono.rename(columns={'(*)Finish': 'end_date'})
+    df_crono = df_crono.rename(columns={'Actual Start': 'act_start_date'})
+    df_crono = df_crono.rename(columns={'Actual Finish': 'act_end_date'})
 
+    df_crono.drop('Delete This Row', axis=1,inplace=True)
     df_crono["projeto_id"]=projeto.id
+
+
 
 
 
@@ -94,8 +130,62 @@ def run_avanco_master_recurso(arquivo_file, projeto_id):
     df_crono['Cost Account ID'] = df_crono['Cost Account ID'].apply(
         lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
 
+    df_crono['(*)Resource Type'] = df_crono['(*)Resource Type'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Actual Start'] = df_crono['Actual Start'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Actual Finish'] = df_crono['Actual Finish'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
     df_crono['Budgeted Units(h)'] = df_crono['Budgeted Units(h)'].apply(
         lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Budgeted Units(h)'] = df_crono['Budgeted Units(h)'].apply(
+        lambda spreadsheet_field: float(str(spreadsheet_field).replace(',', '.')) if ',' in str(
+            spreadsheet_field) else spreadsheet_field
+    )
+
+    df_crono['Actual Units(h)'] = df_crono['Actual Units(h)'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Actual Units(h)'] = df_crono['Actual Units(h)'].apply(
+        lambda spreadsheet_field: float(str(spreadsheet_field).replace(',', '.')) if ',' in str(
+            spreadsheet_field) else spreadsheet_field
+    )
+
+    df_crono['Remaining Early Units(h)'] = df_crono['Remaining Early Units(h)'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Remaining Early Units(h)'] = df_crono['Remaining Early Units(h)'].apply(
+        lambda spreadsheet_field: float(str(spreadsheet_field).replace(',', '.')) if ',' in str(
+            spreadsheet_field) else spreadsheet_field
+    )
+
+    df_crono['Budgeted Cost'] = df_crono['Budgeted Cost'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Budgeted Cost'] = df_crono['Budgeted Cost'].apply(
+        lambda spreadsheet_field: float(str(spreadsheet_field).replace(',', '.')) if ',' in str(
+            spreadsheet_field) else spreadsheet_field
+    )
+
+    df_crono['Actual Cost'] = df_crono['Actual Cost'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Actual Cost'] = df_crono['Actual Cost'].apply(
+        lambda spreadsheet_field: float(str(spreadsheet_field).replace(',', '.')) if ',' in str(
+            spreadsheet_field) else spreadsheet_field
+    )
+
+    df_crono['Remaining Cost'] = df_crono['Remaining Cost'].apply(
+        lambda spreadsheet_field: None if pd.isna(spreadsheet_field) else spreadsheet_field)
+
+    df_crono['Remaining Cost'] = df_crono['Remaining Cost'].apply(
+        lambda spreadsheet_field: float(str(spreadsheet_field).replace(',', '.')) if ',' in str(
+            spreadsheet_field) else spreadsheet_field
+    )
 
 
     df_crono = df_crono.rename(columns={'Resource ID': 'rsrc_id'})
@@ -103,8 +193,17 @@ def run_avanco_master_recurso(arquivo_file, projeto_id):
     df_crono = df_crono.rename(columns={'(*)Activity Status': 'task_status_code'})
     df_crono = df_crono.rename(columns={'Role ID': 'role_id'})
     df_crono = df_crono.rename(columns={'Cost Account ID': 'acct_id'})
+    df_crono = df_crono.rename(columns={'(*)Resource Type': 'rsrc_type'})
+    df_crono = df_crono.rename(columns={'Actual Start': 'act_start_date'})
+    df_crono = df_crono.rename(columns={'Actual Finish': 'act_end_date'})
     df_crono = df_crono.rename(columns={'Budgeted Units(h)': 'target_qty'})
+    df_crono = df_crono.rename(columns={'Actual Units(h)': 'act_qty'})
+    df_crono = df_crono.rename(columns={'Remaining Early Units(h)': 'remain_qty'})
+    df_crono = df_crono.rename(columns={'Budgeted Cost': 'target_cost'})
+    df_crono = df_crono.rename(columns={'Actual Cost': 'act_cost'})
+    df_crono = df_crono.rename(columns={'Remaining Cost': 'remain_cost'})
 
+    df_crono.drop('Delete This Row', axis=1, inplace=True)
     df_crono["projeto_id"]=projeto.id
 
 

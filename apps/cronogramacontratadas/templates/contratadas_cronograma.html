@@ -39,6 +39,7 @@
                                         <thead class="thead-primary">
                                             <tr>
                                                 <th scope="col">Contratada</th>
+                                                <th scope="col">Pacote</th>
                                                 <th scope="col">Data criação</th>
                                                 <th scope="col">Edição</th>
                                             </tr>
@@ -47,8 +48,10 @@
                                         {% for cronograma in cronogramas %}
                                             <tr>
                                                 <td><a href="{% url 'list_cargas_cronograma_contratada' cronograma.id %}">{{cronograma.contratada}}</a></td>
+                                                <td>{{cronograma.pacote}}</td>
                                                 <td>{{cronograma.data_ciacao| date:"d/m/Y"}}</td>
                                                 <td>
+                                                    <button type="button" class="btn btn-primary"  onclick="edit({{cronograma.id}})"> <span class="fa fa-edit"></span></button>
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDelet" onclick="del({{cronograma.id}})"> <span class="fa fa-trash"></span></button>
                                                 </td>
                                             </tr>
@@ -118,6 +121,57 @@
 </div>
 </form>
 
+<form name="form" id="formredit" class="form-horizontal" method="post" action="{% url 'pacote_contratada_edit' %}" enctype="multipart/form-data">
+
+{% csrf_token %}
+    <!-- Modal -->
+<div id="myModalEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" >
+      <div class="modal-body">
+          <div class="form-group">
+              <div class="col-sm-12" >
+                      <div class="field">
+                         <div class="card card-primary">
+                              <div class="card-header">
+                                <h3 class="card-title">Editar Cronograma Contratada</h3>
+                              </div>
+                              <!-- /.card-header -->
+                              <div class="card-body">
+                                <div id="erroredit-prioridade" class="text-danger"></div>
+
+                                  <div class="row">
+                                    <div class="col-sm-12">
+                                      <!-- text input -->
+                                      <div class="form-group">
+                                        <input type="hidden" name="id_edit"  id="id_edit" value="">
+                                        {{formedit.as_p}}
+
+
+                                      </div>
+                                    </div>
+
+                                  </div>
+                              </div>
+                         <button type="submit" class="btn btn-primary">Editar</button>
+                         </div>
+
+
+                      </div>
+
+                       </div>
+          </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+</form>
 
 <form name="form" id="formrdelet" class="form-horizontal" method="post" action="{% url 'processo_documento_deletar' %}" enctype="multipart/form-data">
 
@@ -163,7 +217,7 @@
     function edit(id){
         console.log(id);
         $.ajax({
-            url: "/processos/processo_edit_ajax/" + id,
+            url: "/cronograma_contratada/contratada_edit_ajax/" + id,
             async: true,
             type: 'GET',
             success: function(data) {
@@ -171,18 +225,8 @@
 
                 $('#formredit').trigger("reset");
 
-                $('#id_n_processo_edit').val(data.n_processo);
-                $('#id_advogado_edit').val(data.advogado);
-                $('#id_cliente_edit').val(data.cliente);
-                $('#id_outroenvolvido_edit').val(data.outroenvolvido);
-                $('#id_fase_edit').val(data.fase);
-                $('#id_tipo_acao_edit').val(data.tipo_acao);
-                $('#id_qualificacao_edit').val(data.qualificacao);
-                $('#id_instancia_edit').val(data.instancia);
-                $('#id_d_inicio_edit').val(data.d_inicio);
-                $('#id_comarca_edit').val(data.comarca);
-                $('#id_vara_edit').val(data.vara);
-                $('#id_valor_causa_edit').val(data.valor_causa);
+                $('#id_pacote_edit').val(data.pacote);
+
 
                 $('#id_edit').val(id);
 

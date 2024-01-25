@@ -8,9 +8,12 @@ class CronogramaCrontratadaAddForm(forms.ModelForm):
     contratada = forms.ModelChoiceField(queryset=Fornecedores.objects.none(), required=True, label='Contratada')
     contratada.widget.attrs.update({'class': 'form-control'})
 
+    pacote = forms.CharField(required=True, label='Pacote')
+    pacote.widget.attrs.update({'class': 'form-control'})
+
     class Meta:
         model = CronogramaContratada
-        fields = ('contratada',)
+        fields = ('contratada','pacote')
 
     def __init__(self, *args, **kwargs):
 
@@ -19,6 +22,18 @@ class CronogramaCrontratadaAddForm(forms.ModelForm):
         super(CronogramaCrontratadaAddForm, self).__init__(*args, **kwargs)
 
         self.fields['contratada'].queryset = contratada_queryset
+
+
+class CronogramaCrontratadaEditForm(forms.ModelForm):
+
+    pacote = forms.CharField(required=True, label='Pacote')
+    pacote.widget.attrs.update({'class': 'form-control', 'id':"id_pacote_edit"})
+
+    class Meta:
+        model = CronogramaContratada
+        fields = ('pacote',)
+
+
 
 
 class CronogramaContratadaFormCarga(forms.ModelForm):

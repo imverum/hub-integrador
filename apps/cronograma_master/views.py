@@ -23,7 +23,7 @@ from apps.cronograma_master.forms import CronogramaMasterFormCarga, ConfiguraCro
 from apps.cronograma_master.models import ConfiguraCronogramaMaster, ExecucaoCronoMaster, \
     LogProcessamentoCronogramaMaster, ContainerCronoMaster, ADFContainerCronoMasterCronogramas, TabelaTaskAvancoMaster, \
     TabelaTaskrsrcAvancoMaster
-from apps.cronograma_master.planilha_avanco import criar_planilha_avanco
+from apps.cronograma_master.planilha_avanco import criar_planilha_avanco, verifica_datas_reprogramadas
 from apps.cronogramacontratadas.models import StageCronogramaContratadaAtividade, CronogramaContratada
 from apps.projeto.models import Projeto
 from apps.usuario.models import Profile
@@ -617,5 +617,56 @@ def executar_avanco_container_maste(request, id):
 
 
 
+def verifica_datas_master(request, id):
+    projeto = Projeto.objects.get(id=id)
+    tasks = TabelaTaskAvancoMaster.objects.filter(projeto=projeto)
 
+    dados_contatadas = StageCronogramaContratadaAtividade.objects.filter(projeto=projeto)
+
+    contratadas_unicas = dados_contatadas.values('contratada').distinct()
+
+    maior_data_corte_por_contratada = dados_contatadas.values('contratada').annotate(
+        max_data_corte=Max('data_corte')
+    )
+
+    resultados = []
+    for item in maior_data_corte_por_contratada:
+        contratada_id = item['contratada']
+        max_data_corte = item['max_data_corte']
+        contratada = CronogramaContratada.objects.get(id=contratada_id)  # Obtenha o objeto contratada
+        # Agora, você pode obter o registro específico com a maior data de corte
+        registro_maior_data_corte = StageCronogramaContratadaAtividade.objects.filter(contratada=contratada,
+                                                                                      data_corte=max_data_corte)
+        resultados.extend(registro_maior_data_corte)
+
+    avancos = {
+        'OP_WP': [registro.OP_WP for registro in resultados],
+        'avanco': [registro.avanco for registro in resultados],
+        'data_inicio_real': [registro.data_inicio_real for registro in resultados],
+        'data_fim_real': [registro.data_fim_real for registro in resultados],
+        'data_inicio_reprogramada': [registro.data_inicio_reprogramado for registro in resultados],
+        'data_fim_reprogramada': [registro.data_fim_reprogramado for registro in resultados],
+        'previsto': [registro.previsto for registro in resultados],
+        'actual': [registro.actual for registro in resultados],
+    }
+
+    output = io.BytesIO()
+    avancos = pd.DataFrame(avancos)
+
+
+
+    df = pd.DataFrame(columns=['OP_atividade', 'task_code', 'data', 'valor CR contratada', 'valor CR master'])
+    df = verifica_datas_reprogramadas(avancos, tasks, df)
+    df.to_excel(output)
+    df.to_excel("verificacao.xlsx")
+    output.seek(0)
+
+    filename = 'verifição_datas_master.xlsx'
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return response
 

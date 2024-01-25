@@ -63,7 +63,7 @@ def planilha(planilhas_logs, ops_master, atividades, wb):
     row_num = 1
 
     for atividade in atividades:
-        validacao = valida_op(atividade.id, atividade.OP_WP, ops_master)
+        validacao = valida_op(atividade.activity_id, atividade.OP_WP, ops_master)
         if validacao:
             planilhas_logs.write(row_num, 0, validacao[0])
             planilhas_logs.write(row_num, 1, validacao[1])
@@ -71,14 +71,14 @@ def planilha(planilhas_logs, ops_master, atividades, wb):
 
             row_num += 1
 
-        validarealmaiorplanejado = valida_qtdavanco_maior_qtdplanejado(atividade.id, atividade.actual, atividade.previsto)
+        validarealmaiorplanejado = valida_qtdavanco_maior_qtdplanejado(atividade.activity_id, atividade.actual, atividade.previsto)
         if validarealmaiorplanejado:
             planilhas_logs.write(row_num, 0, validarealmaiorplanejado[0])
             planilhas_logs.write(row_num, 1, validarealmaiorplanejado[1])
             planilhas_logs.write(row_num, 2, validarealmaiorplanejado[2])
 
             row_num += 1
-        validaponderacao = valida_ponderacao(atividade.id, atividade.previsto, atividade.OP_WP)
+        validaponderacao = valida_ponderacao(atividade.activity_id, atividade.previsto, atividade.OP_WP)
         if validaponderacao:
             planilhas_logs.write(row_num, 0, validaponderacao[0])
             planilhas_logs.write(row_num, 1, validaponderacao[1])
@@ -86,7 +86,7 @@ def planilha(planilhas_logs, ops_master, atividades, wb):
 
             row_num += 1
 
-        validaatrasodiasatividade = valida_atraso_dias_atividade(atividade.id, atividade.avanco, atividade.data_fim_bl, atividade.data_fim_reprogramado)
+        validaatrasodiasatividade = valida_atraso_dias_atividade(atividade.activity_id, atividade.avanco, atividade.data_fim_bl, atividade.data_fim_reprogramado)
         if validaatrasodiasatividade:
             planilhas_logs.write(row_num, 0, validaatrasodiasatividade[0])
             planilhas_logs.write(row_num, 1, validaatrasodiasatividade[1])

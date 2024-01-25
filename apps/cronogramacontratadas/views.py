@@ -1,5 +1,5 @@
 import shutil
-
+from django.http import JsonResponse
 from django.shortcuts import render
 import datetime
 from django.db.models import Max
@@ -7,7 +7,8 @@ from apps.core.conector_blob_arquivos import conector_blob
 from apps.cronograma_master.models import TabelaTaskAvancoMaster
 from apps.cronogramacontratadas.carga_app import carga_app, etl_pandas_xer, carga_dados_banco
 from apps.cronogramacontratadas.etl_cronograma_contratada_atividades import run_crono_contratada_atividades
-from apps.cronogramacontratadas.forms import CronogramaCrontratadaAddForm, CronogramaContratadaFormCarga
+from apps.cronogramacontratadas.forms import CronogramaCrontratadaAddForm, CronogramaContratadaFormCarga, \
+    CronogramaCrontratadaEditForm
 from apps.cronogramacontratadas.models import CronogramaContratada, ExecucaoCronoContratadas, StageCronogramaContratadaAtividade
 from apps.cronogramacontratadas.validacao_cronograma_contratada import cria_planilha_validacao
 from apps.fornecedores.models import Fornecedores
@@ -34,9 +35,9 @@ def list_cronograma_contratada(request, id):
     contratada_queryset = Fornecedores.objects.filter(owner=profile.owner)
 
     form = CronogramaCrontratadaAddForm(request.POST or None, contratada_queryset=contratada_queryset)
-
+    formedit = CronogramaCrontratadaEditForm(request.POST or None)
     cronogramas = CronogramaContratada.objects.filter(projeto=projeto)
-    contexto = {'projeto':projeto,'usuario':usuario, 'profile':profile, 'cronogramas':cronogramas, "form":form, "contratada_queryset":contratada_queryset}
+    contexto = {'projeto':projeto,'usuario':usuario, 'profile':profile, 'cronogramas':cronogramas, "form":form, "contratada_queryset":contratada_queryset, "formedit":formedit}
 
 
 
@@ -99,11 +100,44 @@ def list_cargas_cronograma_contratada(request, id):
 
     form = CronogramaContratadaFormCarga(request.POST or None)
 
+
     cronogramas = ExecucaoCronoContratadas.objects.filter(contratada=contratada)
-    contexto = {'projeto':projeto,'usuario':usuario, 'profile':profile, 'cronogramas':cronogramas, "form":form, "contratada":contratada}
+    contexto = {'projeto':projeto,'usuario':usuario, 'profile':profile, 'cronogramas':cronogramas, "form":form, "contratada":contratada, "formedit":formedit}
 
     return render(request, 'cronograma_contratada_carga.html', contexto)
 
+@login_required
+def contratada_edit_ajax(request, id):
+    contratada = CronogramaContratada.objects.get(id=id)
+
+    data = {
+        'pacote': contratada.pacote,
+
+    }
+
+    return JsonResponse(data)
+
+@login_required
+def pacote_contratada_edit(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    id = request.POST.get("id_edit")
+    contratada = CronogramaContratada.objects.get(id=id)
+    form = CronogramaCrontratadaEditForm(request.POST or None, instance=contratada)
+    if request.method == "POST":
+
+        if form.is_valid():
+            form.save()
+
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+        else:
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @csrf_exempt
 @login_required

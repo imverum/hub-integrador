@@ -14,6 +14,7 @@ class CronogramaContratada(models.Model):
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, blank=True, null=True)
     contratada = models.ForeignKey(Fornecedores, on_delete=models.PROTECT, blank=True, null=True)
     data_ciacao = models.DateTimeField(auto_now=True, blank=True, null=True)
+    pacote = models.CharField(max_length=250, blank=True, null=True)
 
     class Meta:
         db_table = 'contratada_container_cronogramas'

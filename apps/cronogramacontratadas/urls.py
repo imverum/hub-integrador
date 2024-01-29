@@ -1,7 +1,7 @@
 
 from django.urls import path, include
 
-from apps.cronogramacontratadas.views import pacote_contratada_edit, contratada_edit_ajax, carga_mip, validacao_cronograma_contratdas, execucao_cronograma_contratada_deletar, execucao_cronograma_contratada_atividades, list_cronograma_contratada, register_cronograma_contratada, processo_documento_deletar, list_cargas_cronograma_contratada
+from apps.cronogramacontratadas.views import api_planilha_bi_contratada, pacote_contratada_edit, contratada_edit_ajax, carga_mip, validacao_cronograma_contratdas, execucao_cronograma_contratada_deletar, execucao_cronograma_contratada_atividades, list_cronograma_contratada, register_cronograma_contratada, processo_documento_deletar, list_cargas_cronograma_contratada
 from django.urls import converters
 
 
@@ -19,5 +19,6 @@ urlpatterns = [
     path('contratada_edit_ajax/<int:id>/', contratada_edit_ajax, name='contratada_edit_ajax'),
     path('pacote_contratada_edit/', pacote_contratada_edit, name='pacote_contratada_edit'),
     path('cade_o_op_mip/', carga_mip, name='carga_mip'),
+    path('api_planilha_bi_contratada/<int:id>/', api_planilha_bi_contratada, name='api_planilha_bi_contratada'),
 
 ]

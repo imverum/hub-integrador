@@ -30,6 +30,7 @@ from apps.usuario.models import Profile
 from django.db.models import Max, F
 import pandas as pd
 from django.db.models import Count
+
 @csrf_exempt
 @login_required
 def execucao_cronograma_master(request):
@@ -669,4 +670,7 @@ def verifica_datas_master(request, id):
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
     return response
+
+
+
 

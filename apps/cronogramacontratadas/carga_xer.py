@@ -354,6 +354,7 @@ def cria_df_carga_xer(xer_parser, ow_wp):
     )
 
     valores = {'task_code': 'ID',
+               'task_name': 'Descrição',
                'free_float_hr_cnt': 'Folga Livre',
                'total_float_hr_cnt': 'Folga Total',
                'target_drtn_hr_cnt': 'Duração',

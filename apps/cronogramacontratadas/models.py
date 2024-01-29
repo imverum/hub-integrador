@@ -97,6 +97,7 @@ class StageCronogramaContratadaAtividade(models.Model):
     data_corte = models.DateField(blank=True, null=True)
 
     activity_id = models.CharField(max_length= 200, blank=True, null=True)
+    descricao = models.CharField(max_length= 600, blank=True, null=True)
     folga_livre = models.DecimalField(max_digits= 38, decimal_places= 5, blank=True, null=True)
     folga_total = models.DecimalField(max_digits= 38, decimal_places= 5, blank=True, null=True)
     duracao = models.DecimalField(max_digits= 38, decimal_places= 5, blank=True, null=True)

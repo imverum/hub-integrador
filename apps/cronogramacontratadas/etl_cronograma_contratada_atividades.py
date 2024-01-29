@@ -47,7 +47,7 @@ def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte,
             tmp_file.seek(0)
 
             caminho_arquivo_temporario = os.path.join(tempfile.gettempdir(), tmp_file.name)
-            print(caminho_arquivo_temporario)
+
         xer = _xer_loader(caminho_arquivo_temporario)
         xer_parser = XerTableRender(xer.tables)
 
@@ -56,7 +56,7 @@ def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte,
         df_crono = cria_df_carga_xer(xer_parser, op_wp)
         df_crono["Work Package"] = "Work Package"
 
-        df_crono.to_excel('carga.xlsx',index=False)
+        #df_crono.to_excel('carga.xlsx',index=False)
 
     # elif arquivo_file.name.endswith('mpp'):
     #     with tempfile.NamedTemporaryFile(suffix='.mpp', delete=False) as tmp_file:
@@ -84,6 +84,9 @@ def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte,
     df_crono.columns = colunas_datas_tratadas
 
     df_crono["ID"] = df_crono["ID"].apply(
+        lambda id: None if pd.isna(id) else id)
+
+    df_crono["Descrição"] = df_crono["Descrição"].apply(
         lambda id: None if pd.isna(id) else id)
 
     df_crono["OP_WP"] = df_crono["OP_WP"].apply(
@@ -166,6 +169,7 @@ def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte,
     df_crono.to_excel('arquivo.xlsx', index=False)
 
     df_crono = df_crono.rename(columns={'ID': 'activity_id'})
+    df_crono = df_crono.rename(columns={'Descrição': 'descricao'})
     df_crono = df_crono.rename(columns={'Folga Livre': 'folga_livre'})
     df_crono = df_crono.rename(columns={'Folga Total': 'folga_total'})
     df_crono = df_crono.rename(columns={'Duração': 'duracao'})

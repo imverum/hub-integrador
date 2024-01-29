@@ -22,7 +22,8 @@ import io
 from django.http import HttpResponse
 import tempfile
 import os
-
+import pandas as pd
+from rest_framework.decorators import api_view
 
 
 @csrf_exempt
@@ -102,7 +103,7 @@ def list_cargas_cronograma_contratada(request, id):
 
 
     cronogramas = ExecucaoCronoContratadas.objects.filter(contratada=contratada)
-    contexto = {'projeto':projeto,'usuario':usuario, 'profile':profile, 'cronogramas':cronogramas, "form":form, "contratada":contratada, "formedit":formedit}
+    contexto = {'projeto':projeto,'usuario':usuario, 'profile':profile, 'cronogramas':cronogramas, "form":form, "contratada":contratada}
 
     return render(request, 'cronograma_contratada_carga.html', contexto)
 
@@ -232,12 +233,10 @@ def execucao_cronograma_contratada_deletar(request):
 @csrf_exempt
 @login_required
 def validacao_cronograma_contratdas(request, data_corte, contratada):
-    print(data_corte)
-    print(contratada)
+
     contratada = CronogramaContratada.objects.get(id=contratada)
-    print(contratada)
     atividades = StageCronogramaContratadaAtividade.objects.filter(data_corte=data_corte,contratada=contratada)
-    print(atividades)
+
     projeto = atividades.first().projeto if atividades.exists() else None
     ops_master = TabelaTaskAvancoMaster.objects.filter(projeto=projeto).values_list('op_cwp', flat=True).distinct()
 
@@ -271,7 +270,7 @@ def carga_mip(request):
                     tmp_file.seek(0)
 
             caminho_arquivo_temporario = os.path.join(tempfile.gettempdir(), tmp_file.name)
-            print(caminho_arquivo_temporario)
+
 
             df_carga = carga_app(caminho_arquivo_temporario)
             df_carga = etl_pandas_xer(df_carga)
@@ -284,3 +283,69 @@ def carga_mip(request):
         return render(request,'carga_mip.html')
 
 
+@api_view(['GET'])
+@csrf_exempt
+def api_planilha_bi_contratada(request, id):
+
+    projeto = Projeto.objects.get(id=id)
+
+    tasks = TabelaTaskAvancoMaster.objects.filter(projeto=projeto)
+
+
+    dados_contatadas = StageCronogramaContratadaAtividade.objects.filter(projeto=projeto)
+
+    contratadas_unicas = dados_contatadas.values('contratada').distinct()
+
+    maior_data_corte_por_contratada = dados_contatadas.values('contratada').annotate(
+        max_data_corte=Max('data_corte')
+    )
+
+    resultados = []
+    contratada_list = []
+    pacote_list = []
+    for item in maior_data_corte_por_contratada:
+        contratada_id = item['contratada']
+        max_data_corte = item['max_data_corte']
+        contratada = CronogramaContratada.objects.get(id=contratada_id)
+
+        # Agora, você pode obter o registro específico com a maior data de corte
+        registro_maior_data_corte = StageCronogramaContratadaAtividade.objects.filter(contratada=contratada,
+                                                                                      data_corte=max_data_corte)
+        resultados.extend(registro_maior_data_corte)
+
+        for i in range(len(registro_maior_data_corte)):
+            contratada_list.append(contratada.contratada.fornecedor)
+
+
+        for i in range(len(registro_maior_data_corte)):
+            pacote_list.append(contratada.pacote)
+
+
+
+    avancos = {
+        'contratada':contratada_list,
+        'pacote': pacote_list,
+        'OP_WP': [registro.OP_WP for registro in resultados],
+        'activity_id': [registro.activity_id for registro in resultados],
+        'descricao': [registro.descricao for registro in resultados],
+        'folga_livre': [registro.folga_livre for registro in resultados],
+        'folga_total': [registro.folga_total for registro in resultados],
+        'duracao': [registro.duracao for registro in resultados],
+        'previsto': [registro.previsto for registro in resultados],
+        'actual': [registro.actual for registro in resultados],
+        'data_inicio_bl': [registro.data_inicio_bl for registro in resultados],
+        'data_fim_bl': [registro.data_fim_bl for registro in resultados],
+        'data_inicio_reprogramado': [registro.data_inicio_reprogramado for registro in resultados],
+        'data_fim_reprogramado': [registro.data_fim_reprogramado for registro in resultados],
+        'data_inicio_real': [registro.data_inicio_real for registro in resultados],
+        'data_fim_real': [registro.data_fim_real for registro in resultados],
+
+    }
+
+
+    avancos = pd.DataFrame(avancos)
+    avancos.to_excel("avancos.xlsx")
+    avancos_json = avancos.to_dict(orient='records')
+    data = {'avancos': avancos_json}
+
+    return JsonResponse(data, safe=False)

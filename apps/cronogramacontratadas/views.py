@@ -157,8 +157,6 @@ def execucao_cronograma_contratada_atividades(request):
 
     print(maior_data_corte)
 
-
-
     if request.method == 'POST':
         form_projeto_crono_contratada_atividade = CronogramaContratadaFormCarga(request.POST, request.FILES)
 

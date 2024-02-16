@@ -18,9 +18,9 @@ def formatar_data(data):
         if pd.notna(data):  # Verifique se o valor não é NaN ou NaT
             return data.strftime("%d/%m/%Y %H:%M:%S")
         else:
-            return None
+            return data
     except:
-        return None
+        return data
 
 def converter_percentual(valor_percentual):
     try:
@@ -122,43 +122,43 @@ def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte,
     df_crono['Data Início BL'] = df_crono['Data Início BL'].str.replace('-', '/')
     df_crono['Data Início BL'] = df_crono['Data Início BL'].apply(tratar_data)
 
-    df_crono["Data Início BL"] = df_crono["Data Início BL"].apply(
-        lambda Unidade: None if pd.isna(Unidade) else Unidade)
+    #df_crono["Data Início BL"] = df_crono["Data Início BL"].apply(
+    #    lambda Unidade: None if pd.isna(Unidade) else Unidade)
 
     df_crono['Data Fim BL'] = df_crono['Data Fim BL'].apply(formatar_data)
     df_crono['Data Fim BL'] = df_crono['Data Fim BL'].str.replace('-', '/')
     df_crono['Data Fim BL'] = df_crono['Data Fim BL'].apply(tratar_data)
 
-    df_crono["Data Fim BL"] = df_crono["Data Fim BL"].apply(
-        lambda valor: None if pd.isna(valor) else valor)
+    #df_crono["Data Fim BL"] = df_crono["Data Fim BL"].apply(
+    #    lambda valor: None if pd.isna(valor) else valor)
 
     df_crono['Data Início Reprogramado'] = df_crono['Data Início Reprogramado'].apply(formatar_data)
     df_crono['Data Início Reprogramado'] = df_crono['Data Início Reprogramado'].str.replace('-', '/')
     df_crono['Data Início Reprogramado'] = df_crono['Data Início Reprogramado'].apply(tratar_data)
 
-    df_crono["Data Início Reprogramado"] = df_crono["Data Início Reprogramado"].apply(
-        lambda Unidade: None if pd.isna(Unidade) else Unidade)
+    #df_crono["Data Início Reprogramado"] = df_crono["Data Início Reprogramado"].apply(
+    #    lambda Unidade: None if pd.isna(Unidade) else Unidade)
 
     df_crono['Data Fim Reprogramado'] = df_crono['Data Fim Reprogramado'].apply(formatar_data)
     df_crono['Data Fim Reprogramado'] = df_crono['Data Fim Reprogramado'].str.replace('-', '/')
     df_crono['Data Fim Reprogramado'] = df_crono['Data Fim Reprogramado'].apply(tratar_data)
 
-    df_crono["Data Fim Reprogramado"] = df_crono["Data Fim Reprogramado"].apply(
-        lambda Unidade: None if pd.isna(Unidade) else Unidade)
+    #df_crono["Data Fim Reprogramado"] = df_crono["Data Fim Reprogramado"].apply(
+    #    lambda Unidade: None if pd.isna(Unidade) else Unidade)
 
     df_crono['Data Início Real'] = df_crono['Data Início Real'].apply(formatar_data)
     df_crono['Data Início Real'] = df_crono['Data Início Real'].str.replace('-', '/')
     df_crono['Data Início Real'] = df_crono['Data Início Real'].apply(tratar_data)
 
-    df_crono["Data Início Real"] = df_crono["Data Início Real"].apply(
-        lambda valor: None if pd.isna(valor) else valor)
+    #df_crono["Data Início Real"] = df_crono["Data Início Real"].apply(
+    #    lambda valor: None if pd.isna(valor) else valor)
 
     df_crono['Data Fim Real'] = df_crono['Data Fim Real'].apply(formatar_data)
     df_crono['Data Fim Real'] = df_crono['Data Fim Real'].str.replace('-', '/')
     df_crono['Data Fim Real'] = df_crono['Data Fim Real'].apply(tratar_data)
 
-    df_crono["Data Fim Real"] = df_crono["Data Fim Real"].apply(
-        lambda Unidade: None if pd.isna(Unidade) else Unidade)
+    #df_crono["Data Fim Real"] = df_crono["Data Fim Real"].apply(
+    #    lambda Unidade: None if pd.isna(Unidade) else Unidade)
 
 
     df_crono["Work Package"] = df_crono["Work Package"].apply(
@@ -166,7 +166,7 @@ def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte,
 
     df_crono[['Folga Livre', 'Folga Total', 'Duração', 'Avanço']] = df_crono[['Folga Livre', 'Folga Total', 'Duração', 'Avanço']].fillna(0)
 
-    df_crono.to_excel('arquivo.xlsx', index=False)
+    #df_crono.to_excel('arquivo.xlsx', index=False)
 
     df_crono = df_crono.rename(columns={'ID': 'activity_id'})
     df_crono = df_crono.rename(columns={'Descrição': 'descricao'})

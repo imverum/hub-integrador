@@ -50,7 +50,7 @@
                                                 <td>{{cronograma.profile}}</td>
                                                 <td>{{cronograma.data_execucao| date:"d/m/Y"}}</td>
                                                 <td>{{cronograma.data_corte| date:"d/m/Y"}}</td>
-                                                <td>Arquivo</td>
+                                                <td><a href="#"></a>{{cronograma.arquivo}}</td>
                                                 <td>
                                                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalConfirmDelet" onclick="del({{cronograma.id}})"> <span class="fa fa-trash"></span></button>
                                                     <a href="{% url 'validacao_cronograma_contratdas' cronograma.data_corte contratada.id %}"> Validações </a>

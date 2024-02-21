@@ -302,7 +302,7 @@ def _xer_loader(xer_path):
 
 
 
-def cria_df_carga_xer(xer_parser, ow_wp):
+def cria_df_carga_xer(xer_parser, ow_wp, ponderacao):
     df_actvcode = xer_parser.render_table('ACTVCODE')
     df_actvtype = xer_parser.render_table('ACTVTYPE')
     df_udftype = xer_parser.render_table('UDFTYPE')
@@ -353,7 +353,21 @@ def cria_df_carga_xer(xer_parser, ow_wp):
         how='left'
     )
 
-    valores = {'task_code': 'ID',
+    df_carga.to_excel('df_antes_tratado.xlsx')
+    print(ponderacao)
+    print(ponderacao)
+    print(ponderacao)
+    print(ponderacao)
+
+    if ponderacao == '2':
+        coluna_previsto = 'target_equip_qty'
+        coluna_real = 'act_equip_qty'
+    else:
+        coluna_previsto = 'target_work_qty'
+        coluna_real = 'act_work_qty'
+
+    valores = {
+               'task_code': 'ID',
                'task_name': 'Descrição',
                'free_float_hr_cnt': 'Folga Livre',
                'total_float_hr_cnt': 'Folga Total',
@@ -365,13 +379,16 @@ def cria_df_carga_xer(xer_parser, ow_wp):
                'reend_date': 'Data Fim Reprogramado',
                'act_start_date': 'Data Início Real',
                'act_end_date': 'Data Fim Real',
-               'target_work_qty': 'previsto',
-               'act_work_qty': 'actual',
+               coluna_previsto: 'previsto',
+               coluna_real: 'actual',
                'actv_code_value': 'OP_WP',
+
                }
 
 
 
     df_carga = df_carga[valores.keys()].rename(columns=valores)
+
+    df_carga.to_excel('df_tratado.xlsx')
 
     return df_carga

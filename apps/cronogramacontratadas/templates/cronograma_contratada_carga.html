@@ -106,6 +106,13 @@
                                           <label for="id_code_xer">Nome do Code:</label>
                                           <input class="form-control" type="text" name="codexer" maxlength=""  id="id_code_xer" required="false">
 
+                                          <label for="id_ponderacao">Ponderação Xer:</label>
+                                          <select name="ponderacao" class="form-control" id="id_ponderacao" >
+                                              <option value="1">Trabalho</option>
+                                              <option value="2">Equipe</option>
+                                            <!--<option value="3">mpp</option>-->
+                                         </select>
+
 <!--                                          <label for="id_code_xer">Coluna Project:</label>-->
 <!--                                          <select name="colunaproject" class="form-control" id="id_coluna_project" >-->
 <!--                                              <option value="1">Texto 1</option>-->
@@ -231,6 +238,7 @@
   // Obtém referências aos elementos do DOM
   var tipoArquivoSelect = document.getElementById("id_tipo_arquivo");
   var codexerInput = document.getElementById("id_code_xer");
+  var ponderacaoxerInput = document.getElementById("id_ponderacao");
   var arquivoCurvaInput = document.getElementById("id_arquivo_curva");
 
   // Adiciona um ouvinte de evento para a alteração no seletor
@@ -249,11 +257,14 @@
       case "1":
         arquivoCurvaInput.accept = ".xlsx";
         codexerInput.required = false; // Não obrigatório quando tipo é "1"
+        ponderacaoxerInput.required = false; // Não obrigatório quando tipo é "1"
         break;
       case "2":
         arquivoCurvaInput.accept = ".xer";
         codexerInput.style.display = isXlsxOrXer ? "none" : "block";
+        ponderacaoxerInput.style.display = isXlsxOrXer ? "none" : "block";
         codexerInput.required = true; // Obrigatório quando tipo é "2"
+        ponderacaoxerInput.required = true; // Obrigatório quando tipo é "2"
         break;
       default:
         arquivoCurvaInput.accept = ".xlsx";

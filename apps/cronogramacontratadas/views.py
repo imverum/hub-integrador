@@ -192,11 +192,15 @@ def execucao_cronograma_contratada_atividades(request):
 
             data_corte = crono.data_corte
             op_wp = request.POST.get("codexer")
+            ponderacao = request.POST.get("ponderacao")
+            print(ponderacao)
+            print(ponderacao)
+            print(ponderacao)
             if arquivo_file.name.endswith('xer') and op_wp== None:
                 messages.error(request,'Para carregar um arquivo xer você precisa informar o nome do code')
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-            run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte, contratada_id, op_wp)
+            run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte, contratada_id, op_wp, ponderacao)
             if crono.status == 'ERRO':
 
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

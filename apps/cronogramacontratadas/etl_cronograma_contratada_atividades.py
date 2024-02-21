@@ -32,7 +32,7 @@ def converter_percentual(valor_percentual):
         return float(valor_percentual)
 
 
-def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte, contratada_id, op_wp):
+def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte, contratada_id, op_wp, ponderacao):
     projeto = Projeto.objects.get(id=projeto_id)
 
     if arquivo_file.name.endswith('xlsx'):
@@ -53,7 +53,7 @@ def run_crono_contratada_atividades(arquivo_file, projeto_id, crono, data_corte,
 
 
 
-        df_crono = cria_df_carga_xer(xer_parser, op_wp)
+        df_crono = cria_df_carga_xer(xer_parser, op_wp, ponderacao)
         df_crono["Work Package"] = "Work Package"
 
         #df_crono.to_excel('carga.xlsx',index=False)
